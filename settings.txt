@@ -1,0 +1,11 @@
+start_dac_value = 72
+low_voltage = 0
+end_voltage = 128
+sweep_start_type = Start
+high_voltage = 128
+end_dac_value = 184
+sweep_type = CV
+start_voltage = 0
+sweep_rate = 1.0
+delay_time = 256.0
+pwm_period_value = 3840
