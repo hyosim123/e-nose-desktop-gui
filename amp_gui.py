@@ -11,8 +11,6 @@ import Tkinter as tk
 import FileDialog    
 import ttk
 # local files
-import amp_frame
-import asv_frame
 import change_toplevel as change_top
 import cv_frame
 import sensor_frame
