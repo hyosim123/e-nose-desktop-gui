@@ -75,7 +75,8 @@ class PyplotEmbed(tk.Frame):
         if isinstance(y_lim, list):
             plt.ylim(y_lim[0], y_lim[1])
         else:
-            plt.ylim(-y_lim, y_lim)
+            # plt.ylim(-y_lim, y_lim)
+            plt.ylim(0, y_lim)
         # format the graph area, make the canvas and show it
         self.graph_area.figure_bed.set_facecolor('white')
         self.graph_area.canvas = FigureCanvasTkAgg(self.graph_area.figure_bed, master=self)
