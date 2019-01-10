@@ -36,7 +36,7 @@ class ElectroChemGUI(tk.Tk):
         date = time.strftime("%Y_%m_%d")
         logging.basicConfig(level=logging.INFO, filename="logging/"+date+"_logging_file.log",
                             format="%(asctime)-15s %(levelname)s %(module)s %(lineno)d: %(message)s")
-
+        self.serialsettings = None
         self.data_save_type = "Converted"
         self.device_params = properties.DeviceParameters()
         self.display_type = check_display_type()
@@ -180,7 +180,7 @@ class ElectroChemGUI(tk.Tk):
         :param button: button the user clicks to try to connect the device
         """
         logging.debug("trying connecting")
-        change_top.SerialSettingChanges(self.parent,self, None, None)
+        self.serialsettings = change_top.SerialSettingChanges(self.parent,self, None, None)
         if self.device.connected:
             logging.info("device is connected")
         else:

@@ -947,7 +947,7 @@ class SerialSettingChanges(tk.Toplevel):
         self._current_range = ""
         self.device = device
         self.data = None  # placeholder for voltage protocol to be held in, for tkinter_pyplot
-        self.geometry("200x150")
+        self.geometry("150x130")
 
         self.title("Serial Device Settings")
         # make labels and an entry widget for a user to change the starting
@@ -989,18 +989,18 @@ class SerialSettingChanges(tk.Toplevel):
         tk.Label(self.options_frame, text="Port: ", padx=10, pady=10).grid(row=0, column=1)
         self.port_options = tk.StringVar(self.options_frame)
         # there are sometimes problems with encoding with this
-        self.port_option_list = list(serial.tools.list_ports.comports())
+        ports = list(serial.tools.list_ports.comports())
+        self.port_option_list = []
+        for p in ports:
+            self.port_option_list.append(p.device)
 
-        # if _master.device_params.adc_tia.tia_resistor in TIA_RESISTOR_VALUES:
-        #     current_option_list_index = TIA_RESISTOR_VALUES.index(
-        #         _master.device_params.adc_tia.tia_resistor)
-        #     self.current_options.set(self.current_option_list[current_option_list_index])
         first_value = self.port_option_list[_master.device_params.adc_tia.current_option_index] if len(self.port_option_list) > 0 else ""
-        self.port_option_list.append(first_value)
+        if first_value == "":
+            self.port_option_list.append(first_value)
         self.port_options.set(first_value)
         current = tk.OptionMenu(self.options_frame, self.port_options,
                                 *self.port_option_list)
-        current.grid(row=0, column=2)
+        current.grid(row=0, column=3)
 # ///////////////////////////////////////////////////////////////////////////////////////////////////////
         # make labels and option menu for the user to change current range the device detects
         tk.Label(self.options_frame, text="Speed: ", padx=10, pady=10).grid(row=3, column=1)
@@ -1008,15 +1008,10 @@ class SerialSettingChanges(tk.Toplevel):
         # there are sometimes problems with encoding with this
         self.current_option_list = BAUDRATES_OPTION_LIST
 
-        # if _master.device_params.adc_tia.tia_resistor in TIA_RESISTOR_VALUES:
-        #     current_option_list_index = TIA_RESISTOR_VALUES.index(
-        #         _master.device_params.adc_tia.tia_resistor)
-        #     self.current_options.set(self.current_option_list[current_option_list_index])
-
         self.current_options.set(self.current_option_list[_master.device_params.adc_tia.current_option_index])
         current = tk.OptionMenu(self.options_frame, self.current_options,
                                 *self.current_option_list)
-        current.grid(row=3, column=2)
+        current.grid(row=3, column=3)
 
         # self.make_buttons(self.options_frame)
 # /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1024,15 +1019,17 @@ class SerialSettingChanges(tk.Toplevel):
         # them and send the correct values to the amperometry microcontroller
         tk.Button(self.options_frame,
                   text='Save',
+                   padx=10,
                   command=lambda: self.save_cv_changes(self.current_options.get(),
                                                        _master, cv_graph,
                                                        cv_display)
-                  ).grid(row=6, column=1)
-
+                  ).grid(row=6, column=1, sticky="ns")
+        
         # make a button to exit the toplevel by destroying it
         tk.Button(self.options_frame,
                   text='Exit',
-                  command=self.destroy).grid(row=6, column=2)
+                  padx=10,
+                  command=self.destroy).grid(row=6, column=3, sticky="ns")
 
         # set varaible traces
         self.end_volt.trace("w", self.trace_delay)
