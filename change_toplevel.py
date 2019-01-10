@@ -27,7 +27,7 @@ COLOR_CHOICES = ['black', 'gray', 'red', 'green', 'blue', 'orange', 'magenta']
 TIA_RESISTOR_VALUES = _globals.TIA_RESISTOR_VALUES
 CURRENT_LIMIT_VALUES = _globals.CURRENT_LIMIT_VALUES
 CURRENT_OPTION_LIST = _globals.CURRENT_OPTION_LIST
-
+BAUDRATES_OPTION_LIST =  _globals.BAUDRATES_OPTION_LIST
 
 class CVSettingChanges(tk.Toplevel):
     """ A modified tkinter toplevel that allows the user to input new voltage ranges to measure
@@ -947,49 +947,66 @@ class SerialSettingChanges(tk.Toplevel):
         self._current_range = ""
         self.device = device
         self.data = None  # placeholder for voltage protocol to be held in, for tkinter_pyplot
-        self.geometry("300x300")
+        self.geometry("200x150")
 
-        self.title("Change Cyclic Voltammetry Settings")
+        self.title("Serial Device Settings")
         # make labels and an entry widget for a user to change the starting
         # voltage of the triangle wave
         self.preview_frame = tk.Frame(self)
         self.options_frame = tk.Frame(self)
-        self.options_frame.pack(side='right')
+        self.options_frame.pack(side='left')
 
-        tk.Label(self.options_frame, text="Starting Voltage: ",
-                 padx=10, pady=10
-                 ).grid(row=0, column=0)
-        # entry widget for the user to change the voltage
-        tk.Entry(self.options_frame, textvariable=self.start_volt).grid(row=0, column=1)
-        # put the current value in the entry widget
-        self.start_volt.set(_master.device_params.cv_settings.start_voltage)
-        tk.Label(self.options_frame, text="mV", padx=10, pady=10).grid(row=0, column=3)
+        # tk.Label(self.options_frame, text="Port: ",
+        #          padx=10, pady=10
+        #          ).grid(row=0, column=0)
+        # # entry widget for the user to change the voltage
+        # tk.Entry(self.options_frame, textvariable=self.start_volt).grid(row=0, column=1)
+        # # put the current value in the entry widget
+        # self.start_volt.set(_master.device_params.cv_settings.start_voltage)
+        # tk.Label(self.options_frame, text="mV", padx=10, pady=10).grid(row=0, column=3)
 
-        # make labels and an entry widget for a user to change the ending voltage
-        #  of the triangle wave
-        tk.Label(self.options_frame, text="Ending Voltage: ",
-                 padx=10, pady=10
-                 ).grid(row=1, column=0)
-        # spinbox for the user to change the voltage
-        tk.Entry(self.options_frame, textvariable=self.end_volt).grid(row=1, column=1)
-        # put the current value in the entry widget
-        self.end_volt.set(_master.device_params.cv_settings.end_voltage)
-        tk.Label(self.options_frame, text="mV", padx=10, pady=10).grid(row=1, column=3)
+        # # make labels and an entry widget for a user to change the ending voltage
+        # #  of the triangle wave
+        # tk.Label(self.options_frame, text="Ending Voltage: ",
+        #          padx=10, pady=10
+        #          ).grid(row=1, column=0)
+        # # spinbox for the user to change the voltage
+        # tk.Entry(self.options_frame, textvariable=self.end_volt).grid(row=1, column=1)
+        # # put the current value in the entry widget
+        # self.end_volt.set(_master.device_params.cv_settings.end_voltage)
+        # tk.Label(self.options_frame, text="mV", padx=10, pady=10).grid(row=1, column=3)
 
-        # make labels and an entry widget for a user to change the sweep rate of the triangle wave
-        tk.Label(self.options_frame, text="Sweep Rate: ", padx=10, pady=10).grid(row=2, column=0)
-        # entry widget for the user to change the voltage
-        tk.Entry(self.options_frame, textvariable=self.freq).grid(row=2, column=1)
-        # put the current value in the entry widget
-        self.freq.set(_master.device_params.cv_settings.sweep_rate)
+        # # make labels and an entry widget for a user to change the sweep rate of the triangle wave
+        # tk.Label(self.options_frame, text="Sweep Rate: ", padx=10, pady=10).grid(row=2, column=0)
+        # # entry widget for the user to change the voltage
+        # tk.Entry(self.options_frame, textvariable=self.freq).grid(row=2, column=1)
+        # # put the current value in the entry widget
+        # self.freq.set(_master.device_params.cv_settings.sweep_rate)
 
-        tk.Label(self.options_frame, text="V/s", padx=10, pady=10).grid(row=2, column=3)
-
+        # tk.Label(self.options_frame, text="V/s", padx=10, pady=10).grid(row=2, column=3)
+# ///////////////////////////////////////////////////////////////////////////////////////////////////////
         # make labels and option menu for the user to change current range the device detects
-        tk.Label(self.options_frame, text="Current Range: ", padx=10, pady=10).grid(row=3, column=0)
+        tk.Label(self.options_frame, text="Port: ", padx=10, pady=10).grid(row=0, column=1)
+        self.port_options = tk.StringVar(self.options_frame)
+        # there are sometimes problems with encoding with this
+        self.port_option_list = list(serial.tools.list_ports.comports())
+
+        # if _master.device_params.adc_tia.tia_resistor in TIA_RESISTOR_VALUES:
+        #     current_option_list_index = TIA_RESISTOR_VALUES.index(
+        #         _master.device_params.adc_tia.tia_resistor)
+        #     self.current_options.set(self.current_option_list[current_option_list_index])
+        first_value = self.port_option_list[_master.device_params.adc_tia.current_option_index] if len(self.port_option_list) > 0 else ""
+        self.port_option_list.append(first_value)
+        self.port_options.set(first_value)
+        current = tk.OptionMenu(self.options_frame, self.port_options,
+                                *self.port_option_list)
+        current.grid(row=0, column=2)
+# ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        # make labels and option menu for the user to change current range the device detects
+        tk.Label(self.options_frame, text="Speed: ", padx=10, pady=10).grid(row=3, column=1)
         self.current_options = tk.StringVar(self.options_frame)
         # there are sometimes problems with encoding with this
-        self.current_option_list = CURRENT_OPTION_LIST
+        self.current_option_list = BAUDRATES_OPTION_LIST
 
         # if _master.device_params.adc_tia.tia_resistor in TIA_RESISTOR_VALUES:
         #     current_option_list_index = TIA_RESISTOR_VALUES.index(
@@ -999,23 +1016,23 @@ class SerialSettingChanges(tk.Toplevel):
         self.current_options.set(self.current_option_list[_master.device_params.adc_tia.current_option_index])
         current = tk.OptionMenu(self.options_frame, self.current_options,
                                 *self.current_option_list)
-        current.grid(row=3, column=1)
+        current.grid(row=3, column=2)
 
-        self.make_buttons(self.options_frame)
-
+        # self.make_buttons(self.options_frame)
+# /////////////////////////////////////////////////////////////////////////////////////////////////////////
         # make a button that will take the entry values and call a function to properly convert
         # them and send the correct values to the amperometry microcontroller
         tk.Button(self.options_frame,
-                  text='Save Changes',
+                  text='Save',
                   command=lambda: self.save_cv_changes(self.current_options.get(),
                                                        _master, cv_graph,
                                                        cv_display)
-                  ).grid(row=9, column=0)
+                  ).grid(row=6, column=1)
 
         # make a button to exit the toplevel by destroying it
         tk.Button(self.options_frame,
                   text='Exit',
-                  command=self.destroy).grid(row=9, column=1)
+                  command=self.destroy).grid(row=6, column=2)
 
         # set varaible traces
         self.end_volt.trace("w", self.trace_delay)

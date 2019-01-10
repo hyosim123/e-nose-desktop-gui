@@ -180,7 +180,7 @@ class ElectroChemGUI(tk.Tk):
         :param button: button the user clicks to try to connect the device
         """
         logging.debug("trying connecting")
-        change_top.VoltageSourceSelect(self.parent, 0)
+        change_top.SerialSettingChanges(self.parent,self, None, None)
         if self.device.connected:
             logging.info("device is connected")
         else:
