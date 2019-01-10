@@ -185,7 +185,7 @@ class ElectroChemGUI(tk.Tk):
             logging.info("device is connected")
         else:
             logging.debug("attempting to connect")
-            self.device = usb_comm.AmpUsb(self, self.device_params)
+            self.device = usb_comm.AmpUsb(self, self.device_params, self.serialsettings.port, self.serialsettings.speed)
             # If no device then try to connect
             if self.device.working:
                 # If a device was just found then change the button's appearance

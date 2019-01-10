@@ -51,7 +51,7 @@ class AmpUsb(object):
     function handles the specifics
     """
 
-    def __init__(self, _master, _device_params, vendor_id=USB_VENDOR_ID, product_id=USB_PRODUCT_ID):
+    def __init__(self, _master, _device_params, vendor_id=None, product_id=None):
         """ Initialize a communication channel to a PSoC with a USBFS module.  Use the default example
         for the USBFS HID example if no vendor or product id are inputted
 
@@ -186,7 +186,7 @@ class AmpUsb(object):
         # return the device and endpoints if the exist or None if no device is found
         return amp_device, ep_out, ep_in
 
-    def connect_serialport(self, _vendor_id=0x04B4, _product_id=0xE177):
+    def connect_serialport(self, _vendor_id=None, _product_id=None):
         """ Attempt to connect to the PSoC device with a USBFS module
         If the device is not found return None
 
@@ -204,13 +204,16 @@ class AmpUsb(object):
             # amp_device = usb.core.find(idVendor=_vendor_id, idProduct=_product_id)
             # amp_device = { }
             ##########################################################
-            COMNUM = 4          #Enter Your COM Port Number Here.
             global ser          #Must be declared in Each Function
             ser = serial.Serial()
+
             ser.baudrate = 9600
-            ser.port = "COM4"   #COM Port Name Start from 0
-            # ser.port = "COM12"   #COM Port Name Start from 0
-    
+            ser.port = "COM4"
+            if _vendor_id:
+                ser.port = _vendor_id
+            if _product_id:
+                ser.baudrate = int(_product_id) 
+          
             # ser.port = '/dev/ttyUSB0' #If Using Linux
 
             ser.timeout = 10

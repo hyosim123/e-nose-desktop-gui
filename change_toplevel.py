@@ -955,7 +955,8 @@ class SerialSettingChanges(tk.Toplevel):
         self.preview_frame = tk.Frame(self)
         self.options_frame = tk.Frame(self)
         self.options_frame.pack(side='left')
-
+        varib = tk.IntVar()
+        # self.port = 
         # tk.Label(self.options_frame, text="Port: ",
         #          padx=10, pady=10
         #          ).grid(row=0, column=0)
@@ -1001,40 +1002,47 @@ class SerialSettingChanges(tk.Toplevel):
         current = tk.OptionMenu(self.options_frame, self.port_options,
                                 *self.port_option_list)
         current.grid(row=0, column=3)
-# ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
         # make labels and option menu for the user to change current range the device detects
         tk.Label(self.options_frame, text="Speed: ", padx=10, pady=10).grid(row=3, column=1)
-        self.current_options = tk.StringVar(self.options_frame)
+        self.speed_options = tk.StringVar(self.options_frame)
         # there are sometimes problems with encoding with this
         self.current_option_list = BAUDRATES_OPTION_LIST
 
-        self.current_options.set(self.current_option_list[_master.device_params.adc_tia.current_option_index])
-        current = tk.OptionMenu(self.options_frame, self.current_options,
+        self.speed_options.set(self.current_option_list[_master.device_params.adc_tia.current_option_index])
+        current = tk.OptionMenu(self.options_frame, self.speed_options,
                                 *self.current_option_list)
         current.grid(row=3, column=3)
 
-        # self.make_buttons(self.options_frame)
-# /////////////////////////////////////////////////////////////////////////////////////////////////////////
         # make a button that will take the entry values and call a function to properly convert
         # them and send the correct values to the amperometry microcontroller
-        tk.Button(self.options_frame,
+        self.save_button = tk.Button(self.options_frame,
                   text='Save',
                    padx=10,
-                  command=lambda: self.save_cv_changes(self.current_options.get(),
-                                                       _master, cv_graph,
-                                                       cv_display)
-                  ).grid(row=6, column=1, sticky="ns")
+                  command=lambda: varib.set(1)
+                  )
+                  
+        self.save_button.grid(row=6, column=1, sticky="ns")
         
         # make a button to exit the toplevel by destroying it
         tk.Button(self.options_frame,
                   text='Exit',
                   padx=10,
-                  command=self.destroy).grid(row=6, column=3, sticky="ns")
+                  command=lambda: varib.set(1)).grid(row=6, column=3, sticky="ns")
 
+        self.save_button.wait_variable(varib)
+        self.port = self.port_options.get()
+        self.speed = self.speed_options.get()
+        self.destroy()
         # set varaible traces
         self.end_volt.trace("w", self.trace_delay)
         self.start_volt.trace("w", self.trace_delay)
         self.freq.trace("w", self.trace_delay)
+
+    def get_values(self):
+        self.port = self.port_options.get()
+        self.speed = self.speed_options.get()
+        # self.options_frame.destroy()
 
     def make_buttons(self, frame):
         # TODO: think these can be removed
