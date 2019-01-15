@@ -2,6 +2,7 @@
 import logging
 import time
 import tkFileDialog
+import Tkconstants
 import Tkinter as tk
 import ttk
 # local files
@@ -17,7 +18,7 @@ COMPLETE_MESSAGE = "Done"
 USB_IN_BYTE_SIZE = 64
 FAIL_COUNT_THRESHOLD = 2
 FAILURE_DELAY = 500
-
+SENSOR_COUNT = 128
 
 class SensorFrame(ttk.Frame):
     """ Frame to hold all the widgets and information
@@ -40,67 +41,37 @@ class SensorFrame(ttk.Frame):
         self.data = data_class.PyplotData()
         self.graph = self.make_graph_area(master, graph_properties)  # make graph
         # self.graph.pack(side='left', expand=True, fill=tk.BOTH)
-        # options_frame = tk.Frame(self, bg=bg, bd=3)
-        # options_frame.pack(side='left', fill=tk.BOTH)
-        # buttons_frame = tk.Frame(options_frame)
-        # buttons_frame.pack(side='bottom', fill=tk.X)
+        options_frame = tk.Frame(self, bg=bg, bd=3)
+        options_frame.pack(side='left', fill=tk.BOTH)
+        buttons_frame = tk.Frame(options_frame)
+        buttons_frame.pack(side='bottom', fill=tk.X)
         # assign device to special handler for CV protocols
 
-        for num in range(128):
-            ROW = (num % 8)
-            COLUNM = 2 + (num / 8)
-            sensorName = "sensor{0}".format(num)
-            checkButtonName = "chkbtn{0}".format(num)
-            self.sensorVars[sensorName] = tk.BooleanVar()
-            self.Checkbutton[checkButtonName] = tk.Checkbutton(self, text = str(num + 1), variable = self.sensorVars[sensorName])
-            checkbutton = self.Checkbutton[checkButtonName]
-            checkbutton.grid(row = ROW, column = COLUNM, sticky = "nswe")
+        # for num in range(SENSOR_COUNT):
+        #     ROW = (num % 8)
+        #     COLUNM = 2 + (num / 8)
+        #     sensorName = "sensor{0}".format(num)
+        #     checkButtonName = "chkbtn{0}".format(num)
+        #     self.sensorVars[sensorName] = tk.BooleanVar()
+        #     self.Checkbutton[checkButtonName] = tk.Checkbutton(self, text = str(num + 1), variable = self.sensorVars[sensorName])
+        #     checkbutton = self.Checkbutton[checkButtonName]
+        #     checkbutton.grid(row = ROW, column = COLUNM, sticky = "wens")
+        lng = Checkbar(master.frames[0], ['Python', 'Ruby', 'Perl', 'C++'])
+        tgl = Checkbar(master.frames[0], ['English','German'])
+        lng.pack(side="top",  fill=tk.X)
+        tgl.pack(side="left")
+        # lng.config(relief='groove', bd=2)
 
         self.device = self.USBHandler(self.graph, master.device, master, self.data)
-
-
-        # for row in range(1,9,1):
-        #     for col in range(1,17,1):
-
-        checkvar1 = tk.BooleanVar()
-        c1 = tk.Checkbutton(self, text = "1", variable = checkvar1)
-        c1.grid(row = 2, column = 2)
-
-        # checkvar2 = tk.BooleanVar()
-        # c2 = tk.Checkbutton(self, text = "2", variable = checkvar2)
-        # c2.pack(padx=5, pady=10,side = "left")
-
-        # checkvar3 = tk.BooleanVar()
-        # c3 = tk.Checkbutton(self, text = "3", variable = checkvar3)
-        # c3.pack(padx=5, pady=10,side = "left")
-
-        # checkvar4 = tk.BooleanVar()
-        # c4 = tk.Checkbutton(self, text = "4", variable = checkvar4)
-        # c4.pack(padx=5, pady=10,side = "left")
-
-        # checkvar5 = tk.BooleanVar()
-        # c5 = tk.Checkbutton(self, text = "5", variable = checkvar5)
-        # c5.pack(padx=5, pady=20,side = "left")
-
-        # checkvar6 = tk.BooleanVar()
-        # c6 = tk.Checkbutton(self, text = "6", variable = checkvar6)
-        # c6.pack(padx=5, pady=20,side = "left" )
-
-        # checkvar7 = tk.BooleanVar()
-        # c7 = tk.Checkbutton(self, text = "7", variable = checkvar7)
-        # c7.pack(padx=5, pady=20,side = "left")
-
-        # checkvar8 = tk.BooleanVar()
-        # c8 = tk.Checkbutton(self, text = "8", variable = checkvar8)
-        # c8.pack(padx=5, pady=20,side = "left")        
+        
         # make area to show the CV settings with a custom class
-        # self.cv_settings_frame = self.CVSettingDisplay(master, options_frame,
-        #                                                self.graph, master.device_params,
-        #                                                self.device)
+        self.cv_settings_frame = self.CVSettingDisplay(master, options_frame,
+                                                       self.graph, master.device_params,
+                                                       self.device)
         # self.cv_settings_frame = self.CVSettingDisplay(master, None,
         #                                                self.graph, master.device_params,
         #                                                self.device)                                               
-        # self.cv_settings_frame.pack(side="top", fill=tk.X)
+        self.cv_settings_frame.pack(side="top", fill=tk.X)
         # initialize the device so the user can hit the run button
         if initialize:
             time.sleep(0.4)  # give time for the calibration data to be processed
@@ -109,7 +80,7 @@ class SensorFrame(ttk.Frame):
             master.device.usb_write("L|3")
             time.sleep(0.1)
         # make the buttons the user can use in the CV experiments
-        # self.make_cv_buttons(buttons_frame, self.graph, self.device)
+        self.make_cv_buttons(buttons_frame, self.graph, self.device)
 
     def make_graph_area(self, master, graph_props):
         """ Make the graph area to display the cyclic voltammetry data.  Use matplotlib if it is
@@ -648,3 +619,16 @@ def check_display_type():
         return "matplotlib"
     except ImportError, _:
         return "canvas"
+
+
+class Checkbar(tk.Frame):
+   def __init__(self, parent=None, picks=[], side="left", anchor="w"):
+      tk.Frame.__init__(self, parent)
+      self.vars = []
+      for pick in picks:
+         var = tk.IntVar()
+         chk = tk.Checkbutton(self, text=pick, variable=var)
+         chk.pack(side=side, anchor=anchor, expand=True)
+         self.vars.append(var)
+   def state(self):
+      return map((lambda var: var.get()), self.vars)

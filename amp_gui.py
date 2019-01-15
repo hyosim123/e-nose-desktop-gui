@@ -56,8 +56,6 @@ class ElectroChemGUI(tk.Tk):
         self.notebook = ttk.Notebook(self)
         self.sensor = sensor_frame.SensorFrame(self, self.notebook, graph_props)
         self.cv = cv_frame.CVFrame(self, self.notebook, graph_props)
-        # self.amp = amp_frame.AmpFrame(self, self.notebook, graph_props)
-        # self.asv = asv_frame.ASVFrame(self, self.notebook, graph_props)
 
         self.notebook.add(self.sensor, text="Sensors")
         self.notebook.add(self.cv, text="Chromo Amperometry")
