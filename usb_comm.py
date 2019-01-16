@@ -79,11 +79,13 @@ class AmpUsb(object):
             # self.working = self.connection_test()
             self.working = True
             self.connected = True
+            self.master.electrode_config_label.set("connected to serial device")
             # return
         else:
             logging.info("not found")
             self.working = False
             self.connected = False
+            self.master.electrode_config_label.set("unable to connect to device")
             return None
 
         # If it was found to be working properly initialize the device
@@ -271,30 +273,6 @@ class AmpUsb(object):
         :param _device_type: sting of the version of the device attached
         """
         self.device_type = _device_type
-
-    def find_voltage_source(self):
-        """ Test the device to see if it is using the 8-bit VDAC or the 12-bit DVDAC
-        :return: None, bind voltage source to self.device_params.dac
-        """
-        self.usb_write("VR")
-        time.sleep(0.2)
-        source_input = self.usb_read_data(2)
-        if not source_input:
-            return
-        if source_input[1] == 0:
-            toplevel.VoltageSourceSelect(self.master, source_input[1])
-        elif source_input[1] == 1:
-            logging.info("VDAC is set in device")
-            self.master.set_voltage_source_label(
-                "Voltage source: 8-bit VDAC (no capacitor installed)")
-            self.device_params.dac.set_source("8-bit DAC")
-        elif source_input[1] == 2:
-            logging.info("DVDAC is voltage source")
-            self.master.set_voltage_source_label(
-                "Voltage source: Dithering VDAC (capacitor installed)")
-            self.device_params.dac.set_source("DVDAC")
-        else:
-            raise IOError
 
     def select_voltage_source(self, source):
         """ Select which voltage source to use in the device

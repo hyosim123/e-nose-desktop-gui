@@ -1,6 +1,3 @@
-
-
-
 """Top levels for the user to change different aspects of the device
 """
 # standard libraries
@@ -55,32 +52,32 @@ class CVSettingChanges(tk.Toplevel):
         self.data = None  # placeholder for voltage protocol to be held in, for tkinter_pyplot
         self.geometry("300x300")
 
-        self.title("Change Cyclic Voltammetry Settings")
+        self.title("Change Chrono Amperometry Settings")
         # make labels and an entry widget for a user to change the starting
         # voltage of the triangle wave
         self.preview_frame = tk.Frame(self)
         self.options_frame = tk.Frame(self)
         self.options_frame.pack(side='right')
 
-        tk.Label(self.options_frame, text="Starting Voltage: ",
+        tk.Label(self.options_frame, text="Starting Time: ",
                  padx=10, pady=10
                  ).grid(row=0, column=0)
         # entry widget for the user to change the voltage
         tk.Entry(self.options_frame, textvariable=self.start_volt).grid(row=0, column=1)
         # put the current value in the entry widget
         self.start_volt.set(_master.device_params.cv_settings.start_voltage)
-        tk.Label(self.options_frame, text="mV", padx=10, pady=10).grid(row=0, column=3)
+        tk.Label(self.options_frame, text="Sec", padx=10, pady=10).grid(row=0, column=3)
 
         # make labels and an entry widget for a user to change the ending voltage
         #  of the triangle wave
-        tk.Label(self.options_frame, text="Ending Voltage: ",
+        tk.Label(self.options_frame, text="Ending Time: ",
                  padx=10, pady=10
                  ).grid(row=1, column=0)
         # spinbox for the user to change the voltage
         tk.Entry(self.options_frame, textvariable=self.end_volt).grid(row=1, column=1)
         # put the current value in the entry widget
         self.end_volt.set(_master.device_params.cv_settings.end_voltage)
-        tk.Label(self.options_frame, text="mV", padx=10, pady=10).grid(row=1, column=3)
+        tk.Label(self.options_frame, text="Sec", padx=10, pady=10).grid(row=1, column=3)
 
         # make labels and an entry widget for a user to change the sweep rate of the triangle wave
         tk.Label(self.options_frame, text="Sweep Rate: ", padx=10, pady=10).grid(row=2, column=0)
@@ -89,10 +86,10 @@ class CVSettingChanges(tk.Toplevel):
         # put the current value in the entry widget
         self.freq.set(_master.device_params.cv_settings.sweep_rate)
 
-        tk.Label(self.options_frame, text="V/s", padx=10, pady=10).grid(row=2, column=3)
+        tk.Label(self.options_frame, text="Kohm", padx=10, pady=10).grid(row=2, column=3)
 
         # make labels and option menu for the user to change current range the device detects
-        tk.Label(self.options_frame, text="Current Range: ", padx=10, pady=10).grid(row=3, column=0)
+        tk.Label(self.options_frame, text="Resistance Range: ", padx=10, pady=10).grid(row=3, column=0)
         self.current_options = tk.StringVar(self.options_frame)
         # there are sometimes problems with encoding with this
         self.current_option_list = CURRENT_OPTION_LIST

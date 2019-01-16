@@ -1,6 +1,3 @@
-
-
-
 """ Properties to apply to the graphs"""
 
 __author__ = 'Karthik Gangadhara'
@@ -17,9 +14,9 @@ class GraphProps(object):
                          'ylim': "[-.1,1]",
                          'title': "'Amperometry time course'",
                          'subplots_adjust': "bottom=0.15, left=0.12"}
-        self.cv_plot = {'xlabel': "'time (sec)'",
-                        'ylabel': "u'resistance (kilo-ohm)'",
-                        'title': "'Chromo Amperometry'",
+        self.cv_plot = {'xlabel': "'Time (sec)'",
+                        'ylabel': "u'Resistance (kilo-ohm)'",
+                        'title': "'Chrono Amperometry'",
                         'subplots_adjust': "bottom=0.15, left=0.12"}
         self.sensor_plot = {'xlabel': "'voltage (mV)'",
                         'ylabel': "u'current (\u00B5A)'",

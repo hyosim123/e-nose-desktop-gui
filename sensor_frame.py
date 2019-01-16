@@ -5,6 +5,7 @@ import tkFileDialog
 import Tkconstants
 import Tkinter as tk
 import ttk
+import tkSimpleDialog
 # local files
 import change_toplevel as change_top
 import pyplot_data_class as data_class
@@ -36,6 +37,7 @@ class SensorFrame(ttk.Frame):
         ttk.Frame.__init__(self, parent_notebook)
         self.sensorVars = {}
         self.Checkbutton = {}
+        self.time_target = 1
         self.master = master
         self.settings = master.device_params.cv_settings
         self.data = data_class.PyplotData()
@@ -121,25 +123,25 @@ class SensorFrame(ttk.Frame):
 
         # Make a button to allow the user to export the data
         tk.Button(_frame,
-                  text="Save data",
+                  text="Update Sensors",
                   command=self.save_all_data).pack(side='bottom', fill=tk.BOTH)
 
         # make button to change data labels
         tk.Button(_frame,
-                  text="Change data style",
+                  text="Reset Sensors",
                   command=self.change_data_labels).pack(side='bottom', fill=tk.BOTH)
 
         # make a button to delete some of the data
         tk.Button(_frame,
-                  text="Delete Data",
-                  command=self.user_select_delete_some_data).pack(side='bottom',
+                  text="Time Target(minutes)",
+                  command=self.time_target_settings).pack(side='bottom',
                                                                   fill=tk.BOTH)
 
         # make a button to allow the user to view the toolbar
-        toolbar_button = tk.Button(_frame,
-                                   text="Add toolbar",
-                                   command=cv_graph.toolbar_toggle)
-        toolbar_button.pack(side='bottom', fill=tk.BOTH)
+        # toolbar_button = tk.Button(_frame,
+        #                            text="Add toolbar",
+        #                            command=cv_graph.toolbar_toggle)
+        # toolbar_button.pack(side='bottom', fill=tk.BOTH)
         # tk.Button(_frame,
         #           text="Read Message",
         #           command=lambda: self.print_usb_message(device)).pack(side='bottom',
@@ -149,6 +151,14 @@ class SensorFrame(ttk.Frame):
         #           text="Chronoamp",
         #           command=lambda: self.chrono_hack(device)).pack(side='bottom',
         #                                                          fill=tk.BOTH)
+
+    def time_target_settings(self):
+        time_target = tkSimpleDialog.askinteger("Time Target", "Enter time in minutes", initialvalue=1, minvalue=1)
+        if time_target != None:
+            self.time_target = time_target
+            self.master.electrode_config_label.set("Target time set to {0} minute(s)".format(self.time_target))
+        else:
+            self.master.electrode_config_label.set("Target time {0} minute(s) retained".format(self.time_target))
 
     def chrono_hack(self, device):
         """ Hack to get a chronoamperometry experiment to run, inactive the button when released

@@ -80,7 +80,7 @@ class PyplotData(object):
             # each point, then close the file
             writer = csv.writer(filename, dialect='excel')
             # make the first line of the file with the data labels
-            line = ["voltage"]  # first line will be the voltages
+            line = ["time"]  # first line will be the voltages
             for i in range(self.index):
                 line.append(self.label[i])
             writer.writerow(line)

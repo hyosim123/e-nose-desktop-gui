@@ -43,16 +43,14 @@ class ElectroChemGUI(tk.Tk):
         self.electrode_config_label = tk.StringVar()
         self.device = usb_comm.AmpUsb(self, self.device_params)
         # let the user see if the device is set for 2 or 3 electrodes
-        # if hasattr(self.device, "found"):
-        #     if self.device.found and self.device.connected:
-        #         self.electrode_config_label.set("connected to the serial device")
-        #     elif self.device.found:  # device i
-        #         self.electrode_config_label.set("unable to connect to device")
-        #     else:
-        #         self.electrode_config_label.set("unable to connect to device")
-        # device starts in 3 electrode config
-        # self.device = None
-        # serialData = serialDialog.SerialDialog(parent)
+        if hasattr(self.device, "found"):
+            if self.device.found and self.device.connected:
+                self.electrode_config_label.set("connected to the serial device")
+            elif self.device.found:  # device i
+                self.electrode_config_label.set("unable to connect to device")
+            else:
+                self.electrode_config_label.set("unable to connect to device")
+       
         graph_props = graph_properties.GraphProps()
         # frame to put the connection button, graph toolbar and label for VDAC source
         self.frames = self.make_bottom_frames()
@@ -62,7 +60,7 @@ class ElectroChemGUI(tk.Tk):
         self.sensor = sensor_frame.SensorFrame(self, self.notebook, graph_props)
         self.cv = cv_frame.CVFrame(self, self.notebook, graph_props)
 
-        self.notebook.add(self.sensor, text="Sensors")
+        self.notebook.add(self.sensor, text="Sensors Settings")
         self.notebook.add(self.cv, text="Chrono Amperometry")
         # self.notebook.add(self.amp, text="Amperometry")
         # self.notebook.add(self.asv, text="Anode Stripping Voltammetry")
@@ -74,14 +72,6 @@ class ElectroChemGUI(tk.Tk):
         # make a button to display connection settings and allow user to try to reconnect
         self.make_connect_button(self.frames[1])
         option_menu.OptionMenu(self)
-
-    def set_data_type(self, _type):
-        """ Developer option to have the device not convert the incoming data and just report and
-        save the raw numbers
-        :param _type: string of either "Raw Counts", or "Converted"
-        """
-        logging.info("Developer option to save raw adc counts selected")
-        self.data_save_type = _type
 
     def make_connect_button(self, _frame):
         """ Make a button that will allow the user to connect to the amperometry device if it is
@@ -115,16 +105,8 @@ class ElectroChemGUI(tk.Tk):
         """
         change_top.ChangeDataLegend(self)
 
-    def set_voltage_source_label(self, message):
-        """ Give a message to the user about what voltage source is being used
-        :param message: message to give the user
-        """
-        self.voltage_source_label.set(message)
-
     def update_current_range(self, _value, current_limit):
         self.cv.set_tia_current_lim(_value, current_limit)
-        # self.amp.set_tia_current_lim(_value, current_limit)
-        # self.asv.set_tia_current_lim(_value, current_limit)
 
     def open_data(self):
         """ Open a csv file that has the data saved in it, in the same format as this program
@@ -168,12 +150,6 @@ class ElectroChemGUI(tk.Tk):
         """  Destroy the master """
         # self.destroy()
         destroyer()
-
-    def set_adc_channel(self, _channel):
-        """ Used to debug the device by storing info in the other adc channels that can be gathered
-        :param _channel:   what adc channel in the device to get
-        """
-        self.device_params.adc_tia.adc_channel = _channel
 
     def connect(self, button=None):
         """ Function the connect button is attached to, to try to connect a amperometry PSoC device
