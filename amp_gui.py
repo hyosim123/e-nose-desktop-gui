@@ -18,7 +18,6 @@ import graph_properties
 import option_menu
 import properties
 import usb_comm
-# import serialDialog
 
 __author__ = 'Karthik Gangadhara'
 
@@ -41,11 +40,17 @@ class ElectroChemGUI(tk.Tk):
         tk.Tk.__init__(self, parent)
         self.parent = parent
         self.voltage_source_label = tk.StringVar()
-        # let the user see if the device is set for 2 or 3 electrodes
         self.electrode_config_label = tk.StringVar()
-        # device starts in 3 electrode config
-        self.electrode_config_label.set("3 electrode configuration")
         self.device = usb_comm.AmpUsb(self, self.device_params)
+        # let the user see if the device is set for 2 or 3 electrodes
+        # if hasattr(self.device, "found"):
+        #     if self.device.found and self.device.connected:
+        #         self.electrode_config_label.set("connected to the serial device")
+        #     elif self.device.found:  # device i
+        #         self.electrode_config_label.set("unable to connect to device")
+        #     else:
+        #         self.electrode_config_label.set("unable to connect to device")
+        # device starts in 3 electrode config
         # self.device = None
         # serialData = serialDialog.SerialDialog(parent)
         graph_props = graph_properties.GraphProps()
@@ -58,7 +63,7 @@ class ElectroChemGUI(tk.Tk):
         self.cv = cv_frame.CVFrame(self, self.notebook, graph_props)
 
         self.notebook.add(self.sensor, text="Sensors")
-        self.notebook.add(self.cv, text="Chromo Amperometry")
+        self.notebook.add(self.cv, text="Chrono Amperometry")
         # self.notebook.add(self.amp, text="Amperometry")
         # self.notebook.add(self.asv, text="Anode Stripping Voltammetry")
 
@@ -256,6 +261,6 @@ def check_display_type():
 if __name__ == '__main__':
     app = ElectroChemGUI()
     app.protocol("WM_DELETE_WINDOW", destroyer)
-    app.title("Chromo Amperometry Device")
+    app.title("Chrono Amperometry Device")
     app.geometry("850x400")
     app.mainloop()
