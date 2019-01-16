@@ -92,7 +92,7 @@ class CVFrame(ttk.Frame):
         :param device: USBHandler class in this file
         """
         # make a button to run a cyclic voltammetry scan
-        self.run_button = tk.Button(_frame, text="Run CV Scan",
+        self.run_button = tk.Button(_frame, text="Run CA Scan",
                                     command=lambda: device.run_scan(cv_graph,
                                                                     self.run_button))
         self.run_button.pack(side='bottom', fill=tk.BOTH)

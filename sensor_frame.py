@@ -41,37 +41,36 @@ class SensorFrame(ttk.Frame):
         self.data = data_class.PyplotData()
         self.graph = self.make_graph_area(master, graph_properties)  # make graph
         # self.graph.pack(side='left', expand=True, fill=tk.BOTH)
-        options_frame = tk.Frame(self, bg=bg, bd=3)
-        options_frame.pack(side='left', fill=tk.BOTH)
-        buttons_frame = tk.Frame(options_frame)
-        buttons_frame.pack(side='bottom', fill=tk.X)
-        # assign device to special handler for CV protocols
 
-        # for num in range(SENSOR_COUNT):
-        #     ROW = (num % 8)
-        #     COLUNM = 2 + (num / 8)
-        #     sensorName = "sensor{0}".format(num)
-        #     checkButtonName = "chkbtn{0}".format(num)
-        #     self.sensorVars[sensorName] = tk.BooleanVar()
-        #     self.Checkbutton[checkButtonName] = tk.Checkbutton(self, text = str(num + 1), variable = self.sensorVars[sensorName])
-        #     checkbutton = self.Checkbutton[checkButtonName]
-        #     checkbutton.grid(row = ROW, column = COLUNM, sticky = "wens")
-        lng = Checkbar(master.frames[0], ['Python', 'Ruby', 'Perl', 'C++'])
-        tgl = Checkbar(master.frames[0], ['English','German'])
-        lng.pack(side="top",  fill=tk.X)
-        tgl.pack(side="left")
-        # lng.config(relief='groove', bd=2)
+        _sensor_hold = {}
+        for i in range(8):
+            _sensor_hold[i] =[]  # add a list to store the column data
+
+        count = 0
+        while(count < 128):
+            for row in _sensor_hold:
+                count += 1
+                _sensor_hold[row].append(count)
+
+        checkbars = {}
+        for i in range(len(_sensor_hold)):
+            checkbars[i] = Checkbar(self, _sensor_hold[i])
+            checkbars[i].pack(side="top",  fill=tk.BOTH, padx=2)
+            if i % 2 == 0:
+                checkbars[i].config(relief='groove', bd=2)
+ 
+        # options_frame = tk.Frame(self, bg=bg, bd=3)
+        # options_frame.pack(side='left', fill=tk.BOTH)
+        buttons_frame = tk.Frame(self, bg=bg, bd=3)
+        buttons_frame.pack(side='bottom', fill=tk.BOTH)
 
         self.device = self.USBHandler(self.graph, master.device, master, self.data)
         
         # make area to show the CV settings with a custom class
-        self.cv_settings_frame = self.CVSettingDisplay(master, options_frame,
-                                                       self.graph, master.device_params,
-                                                       self.device)
-        # self.cv_settings_frame = self.CVSettingDisplay(master, None,
+        # self.cv_settings_frame = self.CVSettingDisplay(master, options_frame,
         #                                                self.graph, master.device_params,
-        #                                                self.device)                                               
-        self.cv_settings_frame.pack(side="top", fill=tk.X)
+        #                                                self.device)
+        # self.cv_settings_frame.pack(side="top", fill=tk.X)
         # initialize the device so the user can hit the run button
         if initialize:
             time.sleep(0.4)  # give time for the calibration data to be processed
@@ -115,7 +114,7 @@ class SensorFrame(ttk.Frame):
         :param device: USBHandler class in this file
         """
         # make a button to run a cyclic voltammetry scan
-        self.run_button = tk.Button(_frame, text="Run CV Scan",
+        self.run_button = tk.Button(_frame, text="Run CA Scan",
                                     command=lambda: device.run_scan(cv_graph,
                                                                     self.run_button))
         self.run_button.pack(side='bottom', fill=tk.BOTH)
@@ -447,24 +446,24 @@ class SensorFrame(ttk.Frame):
             tk.Frame.__init__(self, master=_frame)
             # Make String variables to hold the strings that state the parameters; bind them to self
             # so they are easy to pass between functions
-            self.start_voltage_var_str = tk.StringVar()
-            self.end_voltage_var_str = tk.StringVar()
-            self.freq_var_str = tk.StringVar()
-            self.current_var_str = tk.StringVar()
-            self.device = device
+            # self.start_voltage_var_str = tk.StringVar()
+            # self.end_voltage_var_str = tk.StringVar()
+            # self.freq_var_str = tk.StringVar()
+            # self.current_var_str = tk.StringVar()
+            # self.device = device
 
             # Make Labels to display the String variables
-            tk.Label(textvariable=self.start_voltage_var_str, master=self).pack(side='top')
-            tk.Label(textvariable=self.end_voltage_var_str, master=self).pack(side='top')
-            tk.Label(textvariable=self.freq_var_str, master=self).pack(side='top')
-            tk.Label(textvariable=self.current_var_str, master=self).pack(side='top')
-            # make a button to change the cyclic voltammetry setting
-            tk.Button(self,
-                      text="Change Settings",
-                      command=lambda: self.change_cv_settings(_master, graph)).pack(side='bottom',
-                                                                                    fill=tk.BOTH)
+            # tk.Label(textvariable=self.start_voltage_var_str, master=self).pack(side='top')
+            # tk.Label(textvariable=self.end_voltage_var_str, master=self).pack(side='top')
+            # tk.Label(textvariable=self.freq_var_str, master=self).pack(side='top')
+            # tk.Label(textvariable=self.current_var_str, master=self).pack(side='top')
+            # # make a button to change the cyclic voltammetry setting
+            # tk.Button(self,
+            #           text="Change Settings",
+            #           command=lambda: self.change_cv_settings(_master, graph)).pack(side='bottom',
+            #                                                                         fill=tk.BOTH)
 
-            self.cv_label_update(device_params)
+            # self.cv_label_update(device_params)
 
         def set_current_var_str(self, tia_value):
             self.current_var_str.set(u'Current range: {0}'

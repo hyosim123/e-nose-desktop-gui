@@ -25,12 +25,12 @@ class OptionMenu(tk.Menu):
         menubar = tk.Menu(master)
         # Make a menus along the top of the gui
         file_menu = tk.Menu(menubar, tearoff=0)
-        options_menu = tk.Menu(menubar, tearoff=0)
+        # options_menu = tk.Menu(menubar, tearoff=0)
         data_menu = tk.Menu(menubar, tearoff=0)
         developer_menu = tk.Menu(menubar, tearoff=0)
         about_menu = tk.Menu(menubar, tearoff=0)
         # Different options the user can change
-        make_option_menu(options_menu, master)
+        # make_option_menu(options_menu, master)
         make_file_option_menu(file_menu, master)
         make_data_menu(data_menu, master)
         make_developer_menu(developer_menu, master)
@@ -38,7 +38,7 @@ class OptionMenu(tk.Menu):
 
         menubar.add_cascade(label="File", menu=file_menu)
         menubar.add_cascade(label="Data", menu=data_menu)
-        menubar.add_cascade(label="Options", menu=options_menu)
+        # menubar.add_cascade(label="Options", menu=options_menu)
         menubar.add_cascade(label="Developers", menu=developer_menu)
         menubar.add_cascade(label="About", menu=about_menu)
 

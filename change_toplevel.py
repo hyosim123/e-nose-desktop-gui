@@ -703,10 +703,10 @@ class MasterDestroyer(tk.Toplevel):
 class About(tk.Toplevel):
     def __init__(self, master):
         tk.Toplevel.__init__(self, master=master)
-        self.geometry("300x300")
+        self.geometry("250x100")
         self.title("About")
-        tk.Label(self, text="Developed at Naresuan University\nby Kyle Vitautas Lopin\n\n"
-                            "for comments or suggestions\nemail: kylel@nu.ac.th",
+        tk.Label(self, text="Developed at \nUniversity of Texas\nat Arlington\n\n"
+                            "",
                  font=("Raleway", 12)).pack()
 
 
