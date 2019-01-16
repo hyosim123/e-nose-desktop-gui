@@ -86,7 +86,7 @@ class CVSettingChanges(tk.Toplevel):
         # put the current value in the entry widget
         self.freq.set(_master.device_params.cv_settings.sweep_rate)
 
-        tk.Label(self.options_frame, text="Kohm", padx=10, pady=10).grid(row=2, column=3)
+        tk.Label(self.options_frame, text=u'K\u2126', padx=10, pady=10).grid(row=2, column=3)
 
         # make labels and option menu for the user to change current range the device detects
         tk.Label(self.options_frame, text="Resistance Range: ", padx=10, pady=10).grid(row=3, column=0)

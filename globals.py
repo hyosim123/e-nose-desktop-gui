@@ -1,4 +1,4 @@
-CURRENT_OPTION_LIST = [u'\u00B1100 \u00B5A',
+CURRENT_OPTION_LIST = [u'\u00B1100 \u2126A',
                        u'\u00B150 \u00B5A',
                        u'\u00B133 \u00B5A',
                        u'\u00B125 \u00B5A',
@@ -10,6 +10,7 @@ CURRENT_OPTION_LIST = [u'\u00B1100 \u00B5A',
                        u'\u00B10.5 \u00B5A',
                        u'\u00B10.25 \u00B5A']
 
+RESISTANCE_OPTION_LIST = []
 
 BAUDRATES_OPTION_LIST = [ 110,300,600,1200,2400,14400,19200,38400,57600,115200,230400,460800,921600]
 
