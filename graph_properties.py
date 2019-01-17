@@ -15,8 +15,8 @@ class GraphProps(object):
                          'title': "'Amperometry time course'",
                          'subplots_adjust': "bottom=0.15, left=0.12"}
         self.cv_plot = {'xlabel': "'Time (sec)'",
-                        'ylabel': "u'Resistance (kilo-ohm)'",
-                        'title': "'Chrono Amperometry'",
+                        'ylabel': "u'Resistance (K\u2126)'",
+                        'title': "'E-Nose Application'",
                         'subplots_adjust': "bottom=0.15, left=0.12"}
         self.sensor_plot = {'xlabel': "'voltage (mV)'",
                         'ylabel': "u'current (\u00B5A)'",

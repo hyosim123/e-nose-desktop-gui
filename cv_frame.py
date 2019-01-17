@@ -92,7 +92,7 @@ class CVFrame(ttk.Frame):
         :param device: USBHandler class in this file
         """
         # make a button to run a cyclic voltammetry scan
-        self.run_button = tk.Button(_frame, text="Run CA Scan",
+        self.run_button = tk.Button(_frame, text="Run Application",
                                     command=lambda: device.run_scan(cv_graph,
                                                                     self.run_button))
         self.run_button.pack(side='bottom', fill=tk.BOTH)
@@ -211,7 +211,13 @@ class CVFrame(ttk.Frame):
         # for i in range(1, len(first_line)):  # go through each data line and add it to self.data
         for i in range(1,5):  # go through each data line and add it to self.data
             # self.graph.update_data(_data_hold[0], _data_hold[i], label=first_line[i])
-            self.graph.update_data(_data_hold[0], _data_hold[i], label="sensor{0}".format(i))
+            normalized_data = []
+            max_value = max(_data_hold[i])
+            min_value = min(_data_hold[i])
+            for e in range(len(_data_hold[i])):
+                value = ((_data_hold[i][e] - min_value)/float((max_value-min_value))) * 1000.0
+                normalized_data.append(int(value))
+            self.graph.update_data(_data_hold[0],normalized_data, label="sensor{0}".format(i))
 
     def set_tia_current_lim(self, _value, current_limit):
         self.cv_settings_frame.set_current_var_str(_value)
@@ -450,7 +456,7 @@ class CVFrame(ttk.Frame):
             self.cv_label_update(device_params)
 
         def set_current_var_str(self, tia_value):
-            self.current_var_str.set(u'Current range: {0}'
+            self.current_var_str.set(u'Resistance range: {0}'
                                      .format(tia_value))
 
         def cv_label_update(self, device_params):
@@ -466,8 +472,8 @@ class CVFrame(ttk.Frame):
                                          ' sec')
             self.freq_var_str.set('Sweep rate: ' +
                                   str(device_params.cv_settings.sweep_rate) +
-                                  ' kohm/s')
-            self.current_var_str.set(u'Current range: \u00B1 {0:.1f} \u00B5A'
+                                  u'K\u2126/s')
+            self.current_var_str.set(u'Resistane range: {0:.1f} K\u2126'
                                      .format(device_params.adc_tia.current_lims))
 
         def change_cv_settings(self, master, graph):

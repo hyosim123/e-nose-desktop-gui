@@ -52,7 +52,7 @@ class CVSettingChanges(tk.Toplevel):
         self.data = None  # placeholder for voltage protocol to be held in, for tkinter_pyplot
         self.geometry("300x300")
 
-        self.title("Change Chrono Amperometry Settings")
+        self.title("Change E-Nose Application Settings")
         # make labels and an entry widget for a user to change the starting
         # voltage of the triangle wave
         self.preview_frame = tk.Frame(self)

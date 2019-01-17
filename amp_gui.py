@@ -60,8 +60,8 @@ class ElectroChemGUI(tk.Tk):
         self.sensor = sensor_frame.SensorFrame(self, self.notebook, graph_props)
         self.cv = cv_frame.CVFrame(self, self.notebook, graph_props)
 
-        self.notebook.add(self.sensor, text="Sensors Settings")
-        self.notebook.add(self.cv, text="Chrono Amperometry")
+        self.notebook.add(self.sensor, text="Settings")
+        self.notebook.add(self.cv, text="Application")
         # self.notebook.add(self.amp, text="Amperometry")
         # self.notebook.add(self.asv, text="Anode Stripping Voltammetry")
 
@@ -237,6 +237,7 @@ def check_display_type():
 if __name__ == '__main__':
     app = ElectroChemGUI()
     app.protocol("WM_DELETE_WINDOW", destroyer)
-    app.title("Chrono Amperometry Device")
+    app.title("E-Nose Application")
+    app.iconbitmap(r'favicon.ico')
     app.geometry("850x400")
     app.mainloop()
