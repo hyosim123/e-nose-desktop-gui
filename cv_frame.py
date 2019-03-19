@@ -5,6 +5,7 @@ import tkFileDialog
 import Tkinter as tk
 import ttk
 # local files
+import usb_comm
 import change_toplevel as change_top
 import pyplot_data_class as data_class
 from properties import SensorSettings
@@ -325,6 +326,7 @@ class CVFrame(ttk.Frame):
             # inactive the button so the user cant hit it twice
             # self.run_button.config(state='disabled')
             # self.device.usb_write('R')  # step 1
+            self.device = usb_comm.AmpUsb(self, self.device.device_params, self.sensor_settings.port, self.sensor_settings.baud_rate)
             if self.device.working:
                 logging.debug("device reading")
                 # amount of time to wait for the data to be collected before getting it

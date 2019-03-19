@@ -14,6 +14,7 @@ import globals as _globals
 import tkinter_pyplot
 import serial
 import serial.tools.list_ports
+from properties import SensorSettings
 
 __author__ = 'Karthik Gangadhara'
 
@@ -721,6 +722,7 @@ class SerialSettingChanges(tk.Toplevel):
         """
         tk.Toplevel.__init__(self, master=_master)
         # Initialize values needed later
+        self.sensor_settings = SensorSettings()
         self.master = _master
         self.graph = cv_graph
         self.start_volt = tk.DoubleVar()
@@ -782,6 +784,7 @@ class SerialSettingChanges(tk.Toplevel):
         first_value = self.port_option_list[_master.device_params.adc_tia.current_option_index] if len(self.port_option_list) > 0 else ""
         if first_value == "":
             self.port_option_list.append(first_value)
+
         self.port_options.set(first_value)
         current = tk.OptionMenu(self.options_frame, self.port_options,
                                 *self.port_option_list)
@@ -817,6 +820,10 @@ class SerialSettingChanges(tk.Toplevel):
         self.save_button.wait_variable(varib)
         self.port = self.port_options.get()
         self.speed = self.speed_options.get()
+
+        #need to update the ports and baudrate
+        self.sensor_settings.update_device_settings(self.port, self.speed)
+
         self.destroy()
         # set varaible traces
         self.end_volt.trace("w", self.trace_delay)

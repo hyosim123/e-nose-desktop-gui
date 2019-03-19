@@ -62,8 +62,6 @@ class ElectroChemGUI(tk.Tk):
 
         self.notebook.add(self.sensor, text="Settings")
         self.notebook.add(self.cv, text="Application")
-        # self.notebook.add(self.amp, text="Amperometry")
-        # self.notebook.add(self.asv, text="Anode Stripping Voltammetry")
 
         self.notebook.pack(side='top', expand=True, fill=tk.BOTH)
         tk.Label(self.frames[2], textvariable=self.voltage_source_label, font=("Bookman", 10)).pack(side='top')
@@ -160,6 +158,11 @@ class ElectroChemGUI(tk.Tk):
         self.serialsettings = change_top.SerialSettingChanges(self.parent,self, None, None)
         if self.device.connected:
             logging.info("device is connected")
+            if self.device.working:
+                # If a device was just found then change the button's appearance
+                if button:
+                    button["text"] = 'Connected'
+                    button.config(bg='green')
         else:
             logging.debug("attempting to connect")
             self.device = usb_comm.AmpUsb(self, self.device_params, self.serialsettings.port, self.serialsettings.speed)

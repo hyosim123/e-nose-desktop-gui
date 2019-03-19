@@ -507,6 +507,19 @@ class SensorSettings(object):
             self.sensors_selected = list(sensor_selected)
             self.time_target = time_target
 
+        self.write_data()
+
+    def update_device_settings(self, port = None, speed = None):
+
+        if port:
+            self.port = port
+
+        if speed:
+            self.baud_rate = int(speed)    
+
+        self.write_data()
+
+    def write_data(self):
         try:
             with open(SAVED_SENSORS_SETTINGS_FILE, 'r') as _file:
                 old_file = _file.read()
@@ -522,4 +535,4 @@ class SensorSettings(object):
 
         except Exception as e:
             logging.debug("exception in loading settings file: {0}".format(e))
-            pass  # there is no file so skip
+            pass  # there is no file so skip        
