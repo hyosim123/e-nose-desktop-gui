@@ -36,13 +36,14 @@ class SensorFrame(ttk.Frame):
         :param bg: color to make the background frame
         """
         ttk.Frame.__init__(self, parent_notebook)
+        self.sensor_settings = SensorSettings()
         self._sensor_hold = {}
         self.Checkbutton = {}
         self.time_target = 1
         self.master = master
         self.settings = master.device_params.cv_settings
         self.data = data_class.PyplotData()
-        self.sensors_selected = []
+        self.sensors_selected = set()
         self.graph = self.make_graph_area(master, graph_properties)  # make graph
         # self.graph.pack(side='left', expand=True, fill=tk.BOTH)
 
@@ -218,7 +219,7 @@ class SensorFrame(ttk.Frame):
         """ Save all the data displayed, allow the user to choose the filename
         """
         logging.debug("saving all data")
-
+        self.sensors_selected = set()
         if len(self.Checkbutton) == 0:  # no data to save
             logging.info("No data to save")
             return
@@ -230,28 +231,18 @@ class SensorFrame(ttk.Frame):
                         # compute the selected sensor value
                         selected_sensor = (row + 1) + (indx * 8)
                         # save the selected sensor value
-                        self.sensors_selected.append(selected_sensor)
+                        self.sensors_selected.add(selected_sensor)
 
-        data = {}
-        data["selected sensors"] = self.sensors_selected
-        data["time_target"] = self.time_target
-
-        settings = SensorSettings()
-        settings.update_settings(data)
-        print("success")
-        # ask the user for a filename to save the data in
-        # _file = open_file('saveas')
-
-        # # Confirm that the user supplied a file
-        # if _file:
-        #     self.data.save_all_data("sensor_settings.txt", self.master.data_save_type)
+        # settings = SensorSettings()
+        self.sensor_settings.update_settings(self.sensors_selected, self.time_target, "set")
 
     def reset_selected_checkbox_data(self):
         """ Clear all the lines in the graph and reset the data
         :return:
         """
-        self.graph.delete_all_lines()
-        self.data = data_class.PyplotData()
+        self.sensors_selected = set()
+        self.time_target = 1
+        self.sensor_settings.update_settings(self.sensors_selected, self.time_target, "reset")
 
     def delete_all_data(self):
         """ Clear all the lines in the graph and reset the data
