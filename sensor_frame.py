@@ -9,6 +9,7 @@ import tkSimpleDialog
 # local files
 import change_toplevel as change_top
 import pyplot_data_class as data_class
+from properties import SensorSettings
 import tkinter_pyplot
 
 __author__ = 'Karthik Gangadhara'
@@ -35,31 +36,32 @@ class SensorFrame(ttk.Frame):
         :param bg: color to make the background frame
         """
         ttk.Frame.__init__(self, parent_notebook)
-        self.sensorVars = {}
+        self._sensor_hold = {}
         self.Checkbutton = {}
         self.time_target = 1
         self.master = master
         self.settings = master.device_params.cv_settings
         self.data = data_class.PyplotData()
+        self.sensors_selected = []
         self.graph = self.make_graph_area(master, graph_properties)  # make graph
         # self.graph.pack(side='left', expand=True, fill=tk.BOTH)
 
-        _sensor_hold = {}
+        self._sensor_hold = {}
         for i in range(8):
-            _sensor_hold[i] =[]  # add a list to store the column data
+            self._sensor_hold[i] =[]  # add a list to store the column data
 
         count = 0
         while(count < 128):
-            for row in _sensor_hold:
+            for row in self._sensor_hold:
                 count += 1
-                _sensor_hold[row].append(count)
+                self._sensor_hold[row].append(count)
 
-        checkbars = {}
-        for i in range(len(_sensor_hold)):
-            checkbars[i] = Checkbar(self, _sensor_hold[i])
-            checkbars[i].pack(side="top",  fill=tk.BOTH, padx=2)
+        # checkbars = {}
+        for i in range(len(self._sensor_hold)):
+            self.Checkbutton[i] = Checkbar(self, self._sensor_hold[i])
+            self.Checkbutton[i].pack(side="top",  fill=tk.BOTH, padx=2)
             if i % 2 == 0:
-                checkbars[i].config(relief='groove', bd=2)
+                self.Checkbutton[i].config(relief='groove', bd=2)
  
         # options_frame = tk.Frame(self, bg=bg, bd=3)
         # options_frame.pack(side='left', fill=tk.BOTH)
@@ -116,20 +118,29 @@ class SensorFrame(ttk.Frame):
         :param device: USBHandler class in this file
         """
         # make a button to run a cyclic voltammetry scan
-        self.run_button = tk.Button(_frame, text="Run Scan",
-                                    command=lambda: device.run_scan(cv_graph,
-                                                                    self.run_button))
-        self.run_button.pack(side='bottom', fill=tk.BOTH)
+        # self.run_button = tk.Button(_frame, text="Run Scan",
+        #                             command=lambda: device.run_scan(cv_graph,
+        #                                                             self.run_button))
+        # self.run_button.pack(side='bottom', fill=tk.BOTH)
 
+        # # Make a button to allow the user to export the data
+        # tk.Button(_frame,
+        #           text="Update Sensors",
+        #           command=self.save_all_data).pack(side='bottom', fill=tk.BOTH)
         # Make a button to allow the user to export the data
         tk.Button(_frame,
                   text="Update Sensors",
-                  command=self.save_all_data).pack(side='bottom', fill=tk.BOTH)
+                  command=self.save_selected_checkbox_data).pack(side='bottom', fill=tk.BOTH)
+
+        # # make button to change data labels
+        # tk.Button(_frame,
+        #           text="Reset Sensors",
+        #           command=self.change_data_labels).pack(side='bottom', fill=tk.BOTH)
 
         # make button to change data labels
         tk.Button(_frame,
                   text="Reset Sensors",
-                  command=self.change_data_labels).pack(side='bottom', fill=tk.BOTH)
+                  command=self.reset_selected_checkbox_data).pack(side='bottom', fill=tk.BOTH)
 
         # make a button to delete some of the data
         tk.Button(_frame,
@@ -202,6 +213,45 @@ class SensorFrame(ttk.Frame):
         # Confirm that the user supplied a file
         if _file:
             self.data.save_all_data(_file, self.master.data_save_type)
+
+    def save_selected_checkbox_data(self):
+        """ Save all the data displayed, allow the user to choose the filename
+        """
+        logging.debug("saving all data")
+
+        if len(self.Checkbutton) == 0:  # no data to save
+            logging.info("No data to save")
+            return
+        for row in self.Checkbutton:
+            states = self.Checkbutton[row].state()
+            if len(states) > 0:
+                for indx, state in enumerate(states):
+                    if state == 1:
+                        # compute the selected sensor value
+                        selected_sensor = (row + 1) + (indx * 8)
+                        # save the selected sensor value
+                        self.sensors_selected.append(selected_sensor)
+
+        data = {}
+        data["selected sensors"] = self.sensors_selected
+        data["time_target"] = self.time_target
+
+        settings = SensorSettings()
+        settings.update_settings(data)
+        print("success")
+        # ask the user for a filename to save the data in
+        # _file = open_file('saveas')
+
+        # # Confirm that the user supplied a file
+        # if _file:
+        #     self.data.save_all_data("sensor_settings.txt", self.master.data_save_type)
+
+    def reset_selected_checkbox_data(self):
+        """ Clear all the lines in the graph and reset the data
+        :return:
+        """
+        self.graph.delete_all_lines()
+        self.data = data_class.PyplotData()
 
     def delete_all_data(self):
         """ Clear all the lines in the graph and reset the data
@@ -631,13 +681,16 @@ def check_display_type():
 
 
 class Checkbar(tk.Frame):
-   def __init__(self, parent=None, picks=[], side="left", anchor="w"):
-      tk.Frame.__init__(self, parent)
-      self.vars = []
-      for pick in picks:
-         var = tk.IntVar()
-         chk = tk.Checkbutton(self, text=pick, variable=var)
-         chk.pack(side=side, anchor=anchor, expand=True)
-         self.vars.append(var)
-   def state(self):
-      return map((lambda var: var.get()), self.vars)
+    def __init__(self, parent=None, picks=[], side="left", anchor="w"):
+        tk.Frame.__init__(self, parent)
+        self.vars = []
+        # self.vars = {}
+        for pick in picks:
+            var = tk.IntVar()
+            chk = tk.Checkbutton(self, text=pick, variable=var)
+            chk.pack(side=side, anchor=anchor, expand=True)
+            self.vars.append(var)
+            # self.vars[pick] = var
+
+    def state(self):
+        return map((lambda var: var.get()), self.vars)

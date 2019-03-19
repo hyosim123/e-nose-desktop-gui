@@ -21,6 +21,12 @@ DEFAULT_CV_SETTINGS = {'start_dac_value': 159, 'start_voltage': 1, 'end_voltage'
                        'sweep_start_type': 'Start', 'end_dac_value': 78,
                        'sweep_type': 'CV', 'sweep_rate': 0.2,
                        'delay_time': 1400.0, 'pwm_period_value': 3840}
+
+DEFAULT_SENSOR_SETTINGS = { 
+    'time_target': 1, 
+    'sensors_selected': [1] 
+}
+
 # 'low_voltage': 200, 'high_voltage': 900,
 SWEEP_TYPE_OPTIONS = ['CV', 'LS']
 SWEEP_START_TYPE_OPTIONS = ['Start', 'Zero']
@@ -41,7 +47,7 @@ PLATING_TIME = 600  # seconds
 END_ASV_VOLTAGE = 500  # mV
 
 SAVED_SETTINGS_FILE = "settings.txt"
-
+SAVED_SENSORS_SETTINGS_FILE = "sensor_settings.txt"
 
 class DeviceParameters(object):
     """ Class to hold all the properties and parameters of the PSoC amperometry device
@@ -413,3 +419,131 @@ class ADC_TIA(object):
         self.counts_to_current = (float(lower_count_to_current) + float(
             upper_count_to_current)) / 2.0
         logging.info('adc calibrate, counts to current: {0}'.format(self.counts_to_current))
+
+class SensorSettings(object):
+    """ Class to hold the important parameters for running a cyclic voltammetry scan
+    """
+
+    def __init__(self):
+        """
+        :param dac: DAC instance
+        """
+        # try to open settings file
+        try:
+            with open("sensor_settings.txt", 'r') as _file:
+                for line in _file.readlines():
+                    attribute, value = line.split('=')
+                    attribute = attribute.strip(' ')
+                    value = value.strip()
+                    # convert the string read from the file to the proper data type
+                    valid_value = self.check_valid_value(attribute, value)
+                    if valid_value:
+                        setattr(self, attribute, valid_value)
+
+        except Exception as e:
+            logging.debug("Load error: ", e)
+            with open("sensor_settings.txt", "w") as _file:
+                pass  # make the file if it is not there
+        for key in DEFAULT_SENSOR_SETTINGS:
+            if not hasattr(self, key):
+                setattr(self, key, DEFAULT_SENSOR_SETTINGS[key])
+
+        self.delay_time = 2 * abs(self.start_voltage - self.end_voltage) / self.sweep_rate
+        # self.start_voltage = START_VOLTAGE_CV  # mV, start with basic parameters
+        # self.end_voltage = END_VOLTAGE_CV  # mV
+        self.low_voltage = min([self.start_voltage, self.end_voltage])
+        self.high_voltage = max([self.start_voltage, self.end_voltage])
+        # self.sweep_rate = SWEEP_RATE  # V/s
+        # self.pwm_period_value = self.calculate_pwm_period(clock_freq, dac)
+        # self.delay_time = 2 * abs(self.start_voltage - self.end_voltage) / self.sweep_rate
+        # self.sweep_type = "CV"  # "CV" for Cyclic Voltammetry or "LS" for linear Sweep
+        # # variable to store if the voltage protocol starts and 0 V and
+        # # then to go start volts or if the protocol starts at the start_voltage immediately
+        # self.sweep_start_type = "Start"  # "Zero" or "Start" for what voltage to start at
+        # TODO: are these still needed??
+        self.start_dac_value = None  # init holder
+        self.end_dac_value = None  # init holder
+        self.calc_dac_values(dac)
+
+    @staticmethod
+    def check_valid_value(attribute, value):
+        """ Check if value entered is valid for the attribute it wants to be assigned to.
+        Cross reference th DEFAULT_SENSOR_SETTINGS dict to make sure types are consistent
+        :param attribute: str - class attribute to assign a value to
+        :param value: str - value to convert to the proper type and assign to the attribute
+        :return: properly typed value or False if the data type couldn't be converted
+        """
+        if attribute in DEFAULT_SENSOR_SETTINGS:
+            if isinstance(DEFAULT_SENSOR_SETTINGS[attribute], int):
+                # try to convert the string to int
+                try:
+                    return int(value)
+                except:
+                    return False
+            elif isinstance(DEFAULT_SENSOR_SETTINGS[attribute], float):
+                try:
+                    return float(value)
+                except:
+                    return False
+
+            elif attribute == 'sweep_start_type':
+                if value in SWEEP_START_TYPE_OPTIONS:
+                    return value
+                else:
+                    return False
+            elif attribute == 'sweep_type':
+                if value in SWEEP_TYPE_OPTIONS:
+                    return value
+                else:
+                    return False
+        else:
+            return False
+
+    # def calc_dac_values(self, dac):
+    #     """ TODO: Depreated??
+    #     :param dac:
+    #     :return:
+    #     """
+    #     self.start_dac_value = dac.get_dac_count(self.start_voltage, shift=True)
+    #     self.end_dac_value = dac.get_dac_count(self.end_voltage, shift=True)
+
+    # def calculate_pwm_period(self, clk_freq, dac):
+    #     """ Take the clock frequency that is driving the PWM and divide it by the number of voltage
+    #     steps per second: this is how many clk ticks between each interrupt
+    #     :param clk_freq: int, the clock frequency feeding the PWM timer
+    #     :param dac: instance of a DAC that has the voltage step size
+    #     """
+    #     pwm_period_value = int(round(clk_freq / (self.sweep_rate * 1000 / dac.voltage_step_size)))
+    #     return pwm_period_value
+
+    def update_settings(self, data):
+        """ Update the CV settings
+        :param start_voltage: mV, voltage the user wants to start at
+        :param end_voltage: mV, voltage the user wants to end the cyclic voltammetry at
+        :param sweep_rate: V/s, rate of change of the cyclic voltammetry
+        """
+        self.start_voltage = start_voltage
+        self.end_voltage = end_voltage
+        self.low_voltage = min([self.start_voltage, self.end_voltage])  # not dry, in init
+        self.high_voltage = max([self.start_voltage, self.end_voltage])
+        self.sweep_rate = sweep_rate
+        self.delay_time = 2 * abs(self.start_voltage - self.end_voltage) / self.sweep_rate
+        self.sweep_type = sweep_type
+        self.sweep_start_type = start_type
+
+        try:
+            with open(SAVED_SENSORS_SETTINGS_FILE, 'r') as _file:
+                old_file = _file.read()
+
+        except Exception as e:
+            logging.debug("exception in loading settings file: {0}".format(e))
+            pass  # there is no file so skip
+
+        try:
+            with open(SAVED_SENSORS_SETTINGS_FILE, 'w') as _file:
+                for item in vars(self):
+                    _file.write("{0} = {1}\n".format(item, eval("self.{0}".format(item))))
+
+        except Exception as e:
+            logging.debug("exception in loading settings file: {0}".format(e))
+            pass  # there is no file so skip
