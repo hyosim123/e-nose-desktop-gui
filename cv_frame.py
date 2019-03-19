@@ -7,6 +7,7 @@ import ttk
 # local files
 import change_toplevel as change_top
 import pyplot_data_class as data_class
+from properties import SensorSettings
 import tkinter_pyplot
 
 __author__ = 'Karthik Gangadhara'
@@ -33,6 +34,7 @@ class CVFrame(ttk.Frame):
         :param bg: color to make the background frame
         """
         ttk.Frame.__init__(self, parent_notebook)
+        self.sensor_settings = SensorSettings()
         self.master = master
         self.settings = master.device_params.cv_settings
         self.data = data_class.PyplotData()
@@ -43,7 +45,7 @@ class CVFrame(ttk.Frame):
         buttons_frame = tk.Frame(options_frame)
         buttons_frame.pack(side='bottom', fill=tk.X)
         # assign device to special handler for CV protocols
-        self.device = self.USBHandler(self.graph, master.device, master, self.data)
+        self.device = self.SerialHandler(self.graph, master.device, master, self.data)
         # make area to show the CV settings with a custom class
         self.cv_settings_frame = self.CVSettingDisplay(master, options_frame,
                                                        self.graph, master.device_params,
@@ -223,7 +225,7 @@ class CVFrame(ttk.Frame):
         self.cv_settings_frame.set_current_var_str(_value)
         self.graph.resize_y(current_limit)
 
-    class USBHandler(object):
+    class SerialHandler(object):
         """ NOTE: self.device is the AMpUSB class and device.device is the pyUSB class
         """
         def __init__(self, graph, device, master, data):
@@ -233,6 +235,7 @@ class CVFrame(ttk.Frame):
             :param master: root tk.TK
             :param data: pyplot_data_class.PyplotData - class data is stored in
             """
+            self.sensor_settings = SensorSettings()
             self.graph = graph
             self.device = device  # bind master device to self
             self.master = master
@@ -314,13 +317,14 @@ class CVFrame(ttk.Frame):
             :param _delay: int
             :return: binds the data to the master instead of returning anything
             """
+            self.sensor_settings.get_current_settings()
             if self.device.last_experiment != "CV":  # the look up table is not correct
                 self.send_cv_parameters()
                 self.device.set_last_run = "CV"
             self.run_button = run_button  # bind button to self so it can be put active again
             # inactive the button so the user cant hit it twice
-            self.run_button.config(state='disabled')
-            self.device.usb_write('R')  # step 1
+            # self.run_button.config(state='disabled')
+            # self.device.usb_write('R')  # step 1
             if self.device.working:
                 logging.debug("device reading")
                 # amount of time to wait for the data to be collected before getting it

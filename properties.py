@@ -24,7 +24,9 @@ DEFAULT_CV_SETTINGS = {'start_dac_value': 159, 'start_voltage': 1, 'end_voltage'
 
 DEFAULT_SENSOR_SETTINGS = { 
     'time_target': 1, 
-    'sensors_selected': [1] 
+    'sensors_selected': [1],
+    'port': 'COM4',
+    'baud_rate': 9600
 }
 
 # 'low_voltage': 200, 'high_voltage': 900,
@@ -463,14 +465,34 @@ class SensorSettings(object):
                     return int(value)
                 except:
                     return False
-            elif isinstance(DEFAULT_SENSOR_SETTINGS[attribute], float):
+            elif isinstance(DEFAULT_SENSOR_SETTINGS[attribute], list):
                 try:
-                    return float(value)
+                    value = value.strip('][').split(',')
+                    data = [int(ele) for ele in value]
+                    return data
                 except:
                     return False
+            elif isinstance(DEFAULT_SENSOR_SETTINGS[attribute], str):
+                return value        
         else:
             return False
 
+    def get_current_settings(self):
+        try:
+            with open("sensor_settings.txt", 'r') as _file:
+                for line in _file.readlines():
+                    attribute, value = line.split('=')
+                    attribute = attribute.strip(' ')
+                    value = value.strip()
+                    # convert the string read from the file to the proper data type
+                    valid_value = self.check_valid_value(attribute, value)
+                    if valid_value:
+                        setattr(self, attribute, valid_value)
+
+        except Exception as e:
+            logging.debug("Load error: ", e)
+            with open("sensor_settings.txt", "w") as _file:
+                pass  # make the file if it is not there
 
     def update_settings(self, sensor_selected, time_target, update_type):
         """ Update the Sensor settings

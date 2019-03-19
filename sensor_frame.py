@@ -118,25 +118,9 @@ class SensorFrame(ttk.Frame):
         (needed to put in the button function calls)
         :param device: USBHandler class in this file
         """
-        # make a button to run a cyclic voltammetry scan
-        # self.run_button = tk.Button(_frame, text="Run Scan",
-        #                             command=lambda: device.run_scan(cv_graph,
-        #                                                             self.run_button))
-        # self.run_button.pack(side='bottom', fill=tk.BOTH)
-
-        # # Make a button to allow the user to export the data
-        # tk.Button(_frame,
-        #           text="Update Sensors",
-        #           command=self.save_all_data).pack(side='bottom', fill=tk.BOTH)
-        # Make a button to allow the user to export the data
         tk.Button(_frame,
                   text="Update Sensors",
                   command=self.save_selected_checkbox_data).pack(side='bottom', fill=tk.BOTH)
-
-        # # make button to change data labels
-        # tk.Button(_frame,
-        #           text="Reset Sensors",
-        #           command=self.change_data_labels).pack(side='bottom', fill=tk.BOTH)
 
         # make button to change data labels
         tk.Button(_frame,
@@ -148,21 +132,6 @@ class SensorFrame(ttk.Frame):
                   text="Time Target(minutes)",
                   command=self.time_target_settings).pack(side='bottom',
                                                                   fill=tk.BOTH)
-
-        # make a button to allow the user to view the toolbar
-        # toolbar_button = tk.Button(_frame,
-        #                            text="Add toolbar",
-        #                            command=cv_graph.toolbar_toggle)
-        # toolbar_button.pack(side='bottom', fill=tk.BOTH)
-        # tk.Button(_frame,
-        #           text="Read Message",
-        #           command=lambda: self.print_usb_message(device)).pack(side='bottom',
-        #                                                                fill=tk.BOTH)
-        # experimental button to try chronoamperometry experiments
-        # tk.Button(_frame,
-        #           text="Chronoamp",
-        #           command=lambda: self.chrono_hack(device)).pack(side='bottom',
-        #                                                          fill=tk.BOTH)
 
     def time_target_settings(self):
         time_target = tkSimpleDialog.askinteger("Time Target", "Enter time in minutes", initialvalue=1, minvalue=1)
@@ -233,7 +202,6 @@ class SensorFrame(ttk.Frame):
                         # save the selected sensor value
                         self.sensors_selected.add(selected_sensor)
 
-        # settings = SensorSettings()
         self.sensor_settings.update_settings(self.sensors_selected, self.time_target, "set")
 
     def reset_selected_checkbox_data(self):
