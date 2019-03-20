@@ -33,6 +33,7 @@ class ElectroChemGUI(tk.Tk):
         date = time.strftime("%Y_%m_%d")
         logging.basicConfig(level=logging.INFO, filename="logging/"+date+"_logging_file.log",
                             format="%(asctime)-15s %(levelname)s %(module)s %(lineno)d: %(message)s")
+        self.sensor_settings = properties.SensorSettings()                   
         self.serialsettings = None
         self.data_save_type = "Converted"
         self.device_params = properties.DeviceParameters()
@@ -41,7 +42,7 @@ class ElectroChemGUI(tk.Tk):
         self.parent = parent
         self.voltage_source_label = tk.StringVar()
         self.electrode_config_label = tk.StringVar()
-        self.device = usb_comm.AmpUsb(self, self.device_params)
+        self.device = usb_comm.AmpUsb(self, self.device_params, self.sensor_settings.port, self.sensor_settings.baud_rate)
         # let the user see if the device is set for 2 or 3 electrodes
         if hasattr(self.device, "found"):
             if self.device.found and self.device.connected:

@@ -1,5 +1,5 @@
-.pyc
-.csv
+*.pyc
+*.csv
 
 # Windows image file caches
 Thumbs.db
@@ -17,6 +17,7 @@ $RECYCLE.BIN/
 *.msm
 *.msp
 *.pyc
+*.log
 # Windows shortcuts
 *.lnk
 
