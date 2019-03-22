@@ -36,7 +36,7 @@ class SensorFrame(ttk.Frame):
         :param bg: color to make the background frame
         """
         ttk.Frame.__init__(self, parent_notebook)
-        self.sensor_settings = SensorSettings()
+        self.sensor_settings = master.sensor_settings
         self._sensor_hold = {}
         self.Checkbutton = {}
         self.time_target = 1
@@ -45,7 +45,6 @@ class SensorFrame(ttk.Frame):
         self.data = data_class.PyplotData()
         self.sensors_selected = set()
         self.graph = self.make_graph_area(master, graph_properties)  # make graph
-        # self.graph.pack(side='left', expand=True, fill=tk.BOTH)
 
         self._sensor_hold = {}
         for i in range(8):
@@ -57,25 +56,17 @@ class SensorFrame(ttk.Frame):
                 count += 1
                 self._sensor_hold[row].append(count)
 
-        # checkbars = {}
         for i in range(len(self._sensor_hold)):
-            self.Checkbutton[i] = Checkbar(self, self._sensor_hold[i])
+            self.Checkbutton[i] = Checkbar(self, self._sensor_hold[i], "left", "w", self.sensor_settings.sensors_selected)
             self.Checkbutton[i].pack(side="top",  fill=tk.BOTH, padx=2)
             if i % 2 == 0:
                 self.Checkbutton[i].config(relief='groove', bd=2)
  
-        # options_frame = tk.Frame(self, bg=bg, bd=3)
-        # options_frame.pack(side='left', fill=tk.BOTH)
         buttons_frame = tk.Frame(self, bg=bg, bd=3)
         buttons_frame.pack(side='bottom', fill=tk.BOTH)
 
         self.device = self.USBHandler(self.graph, master.device, master, self.data)
         
-        # make area to show the CV settings with a custom class
-        # self.cv_settings_frame = self.CVSettingDisplay(master, options_frame,
-        #                                                self.graph, master.device_params,
-        #                                                self.device)
-        # self.cv_settings_frame.pack(side="top", fill=tk.X)
         # initialize the device so the user can hit the run button
         if initialize:
             time.sleep(0.4)  # give time for the calibration data to be processed
@@ -638,18 +629,17 @@ def check_display_type():
     except ImportError, _:
         return "canvas"
 
-
 class Checkbar(tk.Frame):
-    def __init__(self, parent=None, picks=[], side="left", anchor="w"):
+    def __init__(self, parent=None, picks=[], side="left", anchor="w", preset= None):
         tk.Frame.__init__(self, parent)
         self.vars = []
-        # self.vars = {}
         for pick in picks:
             var = tk.IntVar()
+            if pick in preset:
+                var = tk.IntVar(value = 1)
             chk = tk.Checkbutton(self, text=pick, variable=var)
             chk.pack(side=side, anchor=anchor, expand=True)
             self.vars.append(var)
-            # self.vars[pick] = var
 
     def state(self):
         return map((lambda var: var.get()), self.vars)
