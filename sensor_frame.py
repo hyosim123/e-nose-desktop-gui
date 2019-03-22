@@ -630,7 +630,7 @@ def check_display_type():
         return "canvas"
 
 class Checkbar(tk.Frame):
-    def __init__(self, parent=None, picks=[], side="left", anchor="w", preset= None):
+    def __init__(self, parent=None, picks=[], side="left", anchor="w", preset= []):
         tk.Frame.__init__(self, parent)
         self.vars = []
         for pick in picks:
