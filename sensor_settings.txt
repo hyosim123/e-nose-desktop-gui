@@ -1,4 +1,4 @@
 baud_rate = 110
-time_target = 6
-sensors_selected = [52, 44, 45, 46]
+time_target = 1
+sensors_selected = []
 port = COM19

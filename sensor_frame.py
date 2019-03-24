@@ -48,7 +48,7 @@ class SensorFrame(ttk.Frame):
 
         self._sensor_hold = {}
         for i in range(8):
-            self._sensor_hold[i] =[]  # add a list to store the column data
+            self._sensor_hold[i] = []  # add a list to store the column data
 
         count = 0
         while(count < 128):
@@ -61,7 +61,7 @@ class SensorFrame(ttk.Frame):
             self.Checkbutton[i].pack(side="top",  fill=tk.BOTH, padx=2)
             if i % 2 == 0:
                 self.Checkbutton[i].config(relief='groove', bd=2)
- 
+
         buttons_frame = tk.Frame(self, bg=bg, bd=3)
         buttons_frame.pack(side='bottom', fill=tk.BOTH)
 
@@ -202,6 +202,12 @@ class SensorFrame(ttk.Frame):
         self.sensors_selected = set()
         self.time_target = 1
         self.sensor_settings.update_settings(self.sensors_selected, self.time_target, "reset")
+        if self.Checkbutton is not None:
+            for row in self.Checkbutton:
+                # uses the existing checkbutton and its variable value to reset
+                for (button, value) in zip(self.Checkbutton[row].checkbutton, self.Checkbutton[row].vars):
+                    if value.get():
+                        button.toggle()
 
     def delete_all_data(self):
         """ Clear all the lines in the graph and reset the data
@@ -633,12 +639,14 @@ class Checkbar(tk.Frame):
     def __init__(self, parent=None, picks=[], side="left", anchor="w", preset= []):
         tk.Frame.__init__(self, parent)
         self.vars = []
+        self.checkbutton = []
         for pick in picks:
             var = tk.IntVar()
             if pick in preset:
                 var = tk.IntVar(value = 1)
             chk = tk.Checkbutton(self, text=pick, variable=var)
             chk.pack(side=side, anchor=anchor, expand=True)
+            self.checkbutton.append(chk)
             self.vars.append(var)
 
     def state(self):

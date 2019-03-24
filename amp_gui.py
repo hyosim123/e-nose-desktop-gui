@@ -203,7 +203,6 @@ class ElectroChemGUI(tk.Tk):
 
 
 def destroyer():
-    # app.quit()
     app.destroy()
     sys.exit()
 
