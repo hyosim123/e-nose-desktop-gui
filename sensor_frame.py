@@ -160,21 +160,6 @@ class SensorFrame(ttk.Frame):
         for index in reversed(list_of_index_to_delete):
             self.graph.delete_a_line(index)
 
-    def save_all_data(self):
-        """ Save all the data displayed, allow the user to choose the filename
-        """
-        logging.debug("saving all data")
-        if self.data.index == 0:  # no data to save
-            logging.info("No data to save")
-            return
-
-        # ask the user for a filename to save the data in
-        _file = open_file('saveas')
-
-        # Confirm that the user supplied a file
-        if _file:
-            self.data.save_all_data(_file, self.master.data_save_type)
-
     def save_selected_checkbox_data(self):
         """ Save all the data displayed, allow the user to choose the filename
         """

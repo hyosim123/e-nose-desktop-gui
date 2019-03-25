@@ -121,15 +121,6 @@ class CVFrame(ttk.Frame):
                                    text="Add toolbar",
                                    command=cv_graph.toolbar_toggle)
         toolbar_button.pack(side='bottom', fill=tk.BOTH)
-        # tk.Button(_frame,
-        #           text="Read Message",
-        #           command=lambda: self.print_usb_message(device)).pack(side='bottom',
-        #                                                                fill=tk.BOTH)
-        # experimental button to try chronoamperometry experiments
-        # tk.Button(_frame,
-        #           text="Chronoamp",
-        #           command=lambda: self.chrono_hack(device)).pack(side='bottom',
-        #                                                          fill=tk.BOTH)
 
     def chrono_hack(self, device):
         """ Hack to get a chronoamperometry experiment to run, inactive the button when released
@@ -212,13 +203,14 @@ class CVFrame(ttk.Frame):
                     _data_hold[i].append(value)
 
         # for i in range(1, len(first_line)):  # go through each data line and add it to self.data
-        for i in range(1,5):  # go through each data line and add it to self.data
+        for i in self.sensor_settings.sensors_selected:  # go through each data line and add it to self.data
             # self.graph.update_data(_data_hold[0], _data_hold[i], label=first_line[i])
             normalized_data = []
-            max_value = max(_data_hold[i])
+            max_value = max(_data_hold[i-1])
             min_value = min(_data_hold[i])
-            for e in range(len(_data_hold[i])):
-                value = ((_data_hold[i][e] - min_value)/float((max_value-min_value))) * 1000.0
+            for e in range(len(_data_hold[i-1])):
+                # value = ((_data_hold[i][e] - min_value)/float((max_value-min_value))) * 1000.0
+                value = _data_hold[i-1][e]
                 normalized_data.append(int(value))
             self.graph.update_data(_data_hold[0],normalized_data, label="sensor{0}".format(i))
 
