@@ -2,35 +2,35 @@
 
 This is Python Tk-inter based GUI, The application connects to a serial device and reads the data and Plot the two dimentional graph for the E-Nose IC data collected.
 
-# E-Nose-Desktop-GUI
+### 1. Setting Time-Target value.
 
 <p align="left">
-  <img  src="./image/1.gif">
+  <img  src="./images/1.gif">
 </p>  
 
 
-# E-Nose-Desktop-GUI
+### 2. Serial Device Configuration
 
 <p align="left">
   <img  src="./images/2.gif">
 </p>  
 
 
-# E-Nose-Desktop-GUI
+### 3. Graph modifying Tool-bar
 
 <p align="left">
   <img  src="./images/3.gif">
 </p>  
 
 
-# E-Nose-Desktop-GUI
+### 4. Saving data into CSV file.
 
 <p align="left">
   <img  src="./images/4.gif">
 </p>  
 
 
-# E-Nose-Desktop-GUI
+### 5. Altering the graph settings
 
 <p align="left">
   <img  src="./images/5.gif">
