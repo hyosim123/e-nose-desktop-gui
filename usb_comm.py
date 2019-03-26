@@ -31,6 +31,8 @@ FAILURE_DELAY = 500
 COMPLETE_MESSAGE = "Done"
 TERMINATION_CODE = -16384
 
+USB_SERIAL_PORT = 0x1D50
+USB_BAUD_RATE = 0x6128
 USB_VENDOR_ID = 0x1D50
 USB_PRODUCT_ID = 0x6128
 
@@ -51,7 +53,7 @@ class AmpUsb(object):
     function handles the specifics
     """
 
-    def __init__(self, _master, _device_params, vendor_id=None, product_id=None):
+    def __init__(self, _master, _device_params, serial_port=None, baud_rate=None):
         """ Initialize a communication channel to a PSoC with a USBFS module.  Use the default example
         for the USBFS HID example if no vendor or product id are inputted
 
@@ -72,7 +74,7 @@ class AmpUsb(object):
         self.last_experiment = "CV"  # keep track of what type of experiment was run last, CV or ASV
         self.samples_to_smooth = 1  # TODO: python 3 use properties to limit its value
         logging.info("attempting connection")
-        self.device, self.ep_out, self.ep_in = self.connect_serialport(vendor_id, product_id)
+        self.device, self.ep_out, self.ep_in = self.connect_serialport(serial_port, baud_rate)
 
         # test the device if it was found to see if it is working properly
         if self.found:
@@ -130,7 +132,7 @@ class AmpUsb(object):
             else:
                 self.connection_test(fails)
 
-    def connect_usb(self, _vendor_id=0x04B4, _product_id=0xE177):
+    def connect_usb(self, _serial_port=0x04B4, _baud_rate=0xE177):
         """ Attempt to connect to the PSoC device with a USBFS module
         If the device is not found return None
 
@@ -138,14 +140,14 @@ class AmpUsb(object):
         https://github.com/walac/pyusb/blob/master/docs/tutorial.rst
         for more details
 
-        :param _vendor_id: the USB vendor id, used to identify the proper device connected to
+        :param _serial_port: the USB vendor id, used to identify the proper device connected to
         sthe computer
-        :param _product_id: the USB product id
+        :param _baud_rate: the USB product id
         :return: the device if it is found, None if not
         """
         # attempt to find the PSoC amperometry device
         try:
-            amp_device = usb.core.find(idVendor=_vendor_id, idProduct=_product_id)
+            amp_device = usb.core.find(idVendor=_serial_port, idProduct=_baud_rate)
         except usb.core.NoBackendError:  # for some reason 'no backend available error can arise.
             logging.info("Device not found")
             self.found = False
@@ -188,7 +190,7 @@ class AmpUsb(object):
         # return the device and endpoints if the exist or None if no device is found
         return amp_device, ep_out, ep_in
 
-    def connect_serialport(self, _vendor_id=None, _product_id=None):
+    def connect_serialport(self, _serial_port=None, _baud_rate=None):
         """ Attempt to connect to the PSoC device with a USBFS module
         If the device is not found return None
 
@@ -196,32 +198,25 @@ class AmpUsb(object):
         https://github.com/walac/pyusb/blob/master/docs/tutorial.rst
         for more details
 
-        :param _vendor_id: the USB vendor id, used to identify the proper device connected to
+        :param _serial_port: the USB vendor id, used to identify the proper device connected to
         sthe computer
-        :param _product_id: the USB product id
+        :param _baud_rate: the USB product id
         :return: the device if it is found, None if not
         """
-        # attempt to find the PSoC amperometry device
         try:
-            # amp_device = usb.core.find(idVendor=_vendor_id, idProduct=_product_id)
-            # amp_device = { }
-            ##########################################################
-            global ser          #Must be declared in Each Function
-            ser = serial.Serial()
+            self.Serial = serial.Serial()
 
-            ser.baudrate = 9600
-            ser.port = "COM4"
-            if _vendor_id:
-                ser.port = _vendor_id
-            if _product_id:
-                ser.baudrate = int(_product_id) 
+            self.Serial.baudrate = 9600
+            self.Serial.port = "COM4"
+            if _serial_port:
+                self.Serial.port = _serial_port
+            if _baud_rate:
+                self.Serial.baudrate = int(_baud_rate) 
           
-            # ser.port = '/dev/ttyUSB0' #If Using Linux
+            self.Serial.timeout = 10
+            self.Serial.open()          #Opens SerialPort
 
-            ser.timeout = 10
-            ser.open()          #Opens SerialPort
-
-            if ser.isOpen():
+            if self.Serial.isOpen():
                 amp_device = True
             ##########################################################
         except serial.SerialException:  # for some reason 'no backend available error can arise.
@@ -300,6 +295,24 @@ class AmpUsb(object):
                 "Voltage source: Dithering VDAC (capacitor installed)")
             # resend the CV prameters with new numbers because the dac changes so the
             self.send_cv_parameters()
+
+    def read_serial_data(self,serial_settings = None):
+        data = []
+        self.Serial.close()
+        self.Serial.open()
+        if self.Serial.is_open:
+            self.Serial.write(b'h')
+        max_time = 60
+        start_time = time.time()
+        if serial_settings and serial_settings.time_target:
+            max_time = (serial_settings.time_target * 60)
+
+        while (time.time() - start_time) < max_time:
+            line_data = self.Serial.readline()
+            print(line_data)
+            data.append(line_data)
+
+        return data    
 
     def start_hardware(self):
         self.usb_write('H')

@@ -177,6 +177,33 @@ class CVFrame(ttk.Frame):
         """
         change_top.UserSelectDataDelete(self)
 
+    def parse_and_display_csv_data(self, data):
+        logging.debug("parsing serial data")
+        _data_hold = []  # buffer to hold the data we read from the file
+
+        for i in range(len(data[0])):
+            _data_hold.append([])  # add a list to store the column data
+
+        for row in data:
+            row = row.replace('\x00', '' ).strip().split(',')
+            for i, data in enumerate(row):
+                # _data_hold[i].append(float(data))
+                if data:
+                    data = data.split(":")
+                    value = ((3600 * int(data[0])) + (60 * int(data[1])) + (int(data[2]))) if i == 0 else int(data[0])
+                    _data_hold[i].append(value)
+
+        for i in self.sensor_settings.sensors_selected:  # go through each data line and add it to self.data
+            normalized_data = []
+            max_value = max(_data_hold[i])
+            min_value = min(_data_hold[i])
+            for e in range(len(_data_hold[i])):
+                # value = ((_data_hold[i][e] - min_value)/float((max_value-min_value))) * 1000.0
+                value = _data_hold[i][e]
+                normalized_data.append(int(value))
+            self.graph.update_data(_data_hold[0],normalized_data, label="sensor{0}".format(i))
+
+
     def open_data(self, csv_reader_file, first_line):
         """ Open a csv file that has the data saved in it, in the same format as this program
         saves the data.
@@ -206,11 +233,11 @@ class CVFrame(ttk.Frame):
         for i in self.sensor_settings.sensors_selected:  # go through each data line and add it to self.data
             # self.graph.update_data(_data_hold[0], _data_hold[i], label=first_line[i])
             normalized_data = []
-            max_value = max(_data_hold[i-1])
+            max_value = max(_data_hold[i])
             min_value = min(_data_hold[i])
-            for e in range(len(_data_hold[i-1])):
+            for e in range(len(_data_hold[i])):
                 # value = ((_data_hold[i][e] - min_value)/float((max_value-min_value))) * 1000.0
-                value = _data_hold[i-1][e]
+                value = _data_hold[i][e]
                 normalized_data.append(int(value))
             self.graph.update_data(_data_hold[0],normalized_data, label="sensor{0}".format(i))
 
@@ -311,15 +338,15 @@ class CVFrame(ttk.Frame):
             :return: binds the data to the master instead of returning anything
             """
             self.sensor_settings.get_current_settings()
-            if self.device.last_experiment != "CV":  # the look up table is not correct
-                self.send_cv_parameters()
-                self.device.set_last_run = "CV"
-            self.run_button = run_button  # bind button to self so it can be put active again
-            # inactive the button so the user cant hit it twice
-            # self.run_button.config(state='disabled')
-            # self.device.usb_write('R')  # step 1
-            self.device = usb_comm.AmpUsb(self, self.device.device_params, self.sensor_settings.port, self.sensor_settings.baud_rate)
-            if self.device.working:
+            # if self.device.last_experiment != "CV":  # the look up table is not correct
+            #     self.send_cv_parameters()
+            #     self.device.set_last_run = "CV"
+            # self.run_button = run_button  # bind button to self so it can be put active again
+            # # inactive the button so the user cant hit it twice
+            # # self.run_button.config(state='disabled')
+            # # self.device.usb_write('R')  # step 1
+            # self.device = usb_comm.AmpUsb(self, self.device.device_params, self.sensor_settings.port, self.sensor_settings.baud_rate)
+            if self.device.Serial.isOpen():
                 logging.debug("device reading")
                 # amount of time to wait for the data to be collected before getting it
                 # give a 200 ms buffer to the calculated delay time
@@ -338,10 +365,13 @@ class CVFrame(ttk.Frame):
             :param canvas: the widget that is called to display the data
             :param fail_count: int, running count of how many attempts have been tried
             """
-            check_message = self.device.usb_read_message()  # step 3
+            # check_message = self.device.usb_read_message()  # step 3
+            check_message = self.device.read_serial_data(self.sensor_settings)  # step 3
 
-            if check_message == COMPLETE_MESSAGE:
-                self.get_and_display_data(canvas)
+            # if check_message == COMPLETE_MESSAGE:
+            if check_message and len(check_message) > 1:
+                self.master.cv.parse_and_display_csv_data(check_message)
+                # self.get_and_display_data(canvas)
             else:
                 # wait a little longer and retry, after a certain amount of time, timeout
                 if fail_count < FAIL_COUNT_THRESHOLD:  # retry step 2

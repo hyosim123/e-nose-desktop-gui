@@ -1,11 +1,11 @@
 start_dac_value = 129
 low_voltage = 20
-end_voltage = 130
+end_voltage = 60
 sweep_start_type = Start
-high_voltage = 130
-end_dac_value = 141
+high_voltage = 60
+end_dac_value = 136
 sweep_type = CV
 start_voltage = 20
 sweep_rate = 1.0
-delay_time = 220.0
+delay_time = 80.0
 pwm_period_value = 3840
