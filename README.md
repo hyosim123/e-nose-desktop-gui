@@ -2,6 +2,8 @@
 
 This is Python Tk-inter based GUI, The application connects to a serial device and reads the data and Plot the two dimentional graph for the E-Nose IC data collected.
 
+Download the Graphical User Interface from the e-nose-desktop-gui repository. You can download the python source files or the executable for Windows machines in the release tab at https://github.com/KarthikGangadhar/e-nose-desktop-gui/releases
+
 The Application is developed using Tk-inter and exported to exe using [pyinstaller](https://www.youtube.com/watch?v=lOIJIk_maO4) with the following command.
 
 ```
