@@ -2,7 +2,7 @@
 
 This is Python Tk-inter based GUI, The application connects to a serial device and reads the data and Plot the two dimentional graph for the E-Nose IC data collected.
 
-The Application is developed using Tk-inter and exported as to exe using [pyinstaller](https://www.youtube.com/watch?v=lOIJIk_maO4) with the following command
+The Application is developed using Tk-inter and exported to exe using [pyinstaller](https://www.youtube.com/watch?v=lOIJIk_maO4) with the following command.
 
 ```
   pyinstaller -w -F amp_gui.py -i favicon.ico
