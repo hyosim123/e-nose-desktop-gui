@@ -35,3 +35,10 @@ This is Python Tk-inter based GUI, The application connects to a serial device a
 <p align="left">
   <img  src="./images/5.gif">
 </p>  
+
+The Application is developed using Tk-inter and exported as to exe using (pyinstaller)[] with the following command
+
+```
+  pyinstaller -w -F amp_gui.py -i favicon.ico
+
+```

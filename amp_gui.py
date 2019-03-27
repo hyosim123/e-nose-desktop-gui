@@ -241,6 +241,6 @@ if __name__ == '__main__':
     app = ElectroChemGUI()
     app.protocol("WM_DELETE_WINDOW", destroyer)
     app.title("E-Nose Application")
-    app.iconbitmap(r'favicon.ico')
+    # app.iconbitmap(r'favicon.ico')
     app.geometry("850x400")
     app.mainloop()
