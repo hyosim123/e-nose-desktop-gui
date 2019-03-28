@@ -195,7 +195,8 @@ class CVFrame(ttk.Frame):
 
         x_lim_low = min(_data_hold[0])
         x_lim_high = max(_data_hold[0])
-        self.graph.resize_x(x_lim_low, x_lim_high)    
+        self.graph.resize_x(x_lim_low, x_lim_high)
+        self.sensor_settings.get_current_settings() 
         for i in self.sensor_settings.sensors_selected:  # go through each data line and add it to self.data
             normalized_data = []
             max_value = max(_data_hold[i])

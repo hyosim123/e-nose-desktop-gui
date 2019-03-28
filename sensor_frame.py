@@ -68,12 +68,12 @@ class SensorFrame(ttk.Frame):
         self.device = self.USBHandler(self.graph, master.device, master, self.data)
         
         # initialize the device so the user can hit the run button
-        if initialize:
-            time.sleep(0.4)  # give time for the calibration data to be processed
-            self.device.send_cv_parameters()
-            time.sleep(0.1)
-            master.device.usb_write("L|3")
-            time.sleep(0.1)
+        # if initialize:
+        #     time.sleep(0.4)  # give time for the calibration data to be processed
+        #     self.device.send_cv_parameters()
+        #     time.sleep(0.1)
+        #     master.device.usb_write("L|3")
+        #     time.sleep(0.1)
         # make the buttons the user can use in the CV experiments
         self.make_cv_buttons(buttons_frame, self.graph, self.device)
 
@@ -115,8 +115,13 @@ class SensorFrame(ttk.Frame):
 
         # make button to change data labels
         tk.Button(_frame,
+                  text="Select All Sensors",
+                  command=self.select_all_checkbox_data).pack(side='bottom', fill=tk.BOTH)
+
+        # make button to change data labels
+        tk.Button(_frame,
                   text="Reset Sensors",
-                  command=self.reset_selected_checkbox_data).pack(side='bottom', fill=tk.BOTH)
+                  command=self.reset_selected_checkbox_data).pack(side='bottom', fill=tk.BOTH)                  
 
         # make a button to delete some of the data
         tk.Button(_frame,
@@ -193,6 +198,17 @@ class SensorFrame(ttk.Frame):
                 for (button, value) in zip(self.Checkbutton[row].checkbutton, self.Checkbutton[row].vars):
                     if value.get():
                         button.toggle()
+
+    def select_all_checkbox_data(self):
+        self.sensors_selected = [i for i in range(1,129)]
+        if self.Checkbutton is not None:
+            for row in self.Checkbutton:
+                # uses the existing checkbutton and its variable value to reset
+                for (button, value) in zip(self.Checkbutton[row].checkbutton, self.Checkbutton[row].vars):
+                    if not value.get():
+                        button.toggle()
+
+        self.sensor_settings.update_settings(self.sensors_selected, self.time_target, "set")
 
     def delete_all_data(self):
         """ Clear all the lines in the graph and reset the data
