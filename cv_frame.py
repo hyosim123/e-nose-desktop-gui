@@ -346,7 +346,8 @@ class CVFrame(ttk.Frame):
             # # self.run_button.config(state='disabled')
             # # self.device.usb_write('R')  # step 1
             # self.device = usb_comm.AmpUsb(self, self.device.device_params, self.sensor_settings.port, self.sensor_settings.baud_rate)
-            if self.device.Serial.isOpen():
+            if self.master.device.Serial.isOpen():
+                self.device.Serial = self.master.device.Serial
                 logging.debug("device reading")
                 # amount of time to wait for the data to be collected before getting it
                 # give a 200 ms buffer to the calculated delay time

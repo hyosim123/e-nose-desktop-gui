@@ -742,36 +742,7 @@ class SerialSettingChanges(tk.Toplevel):
         self.options_frame = tk.Frame(self)
         self.options_frame.pack(side='left')
         varib = tk.IntVar()
-        # self.port = 
-        # tk.Label(self.options_frame, text="Port: ",
-        #          padx=10, pady=10
-        #          ).grid(row=0, column=0)
-        # # entry widget for the user to change the voltage
-        # tk.Entry(self.options_frame, textvariable=self.start_volt).grid(row=0, column=1)
-        # # put the current value in the entry widget
-        # self.start_volt.set(_master.device_params.cv_settings.start_voltage)
-        # tk.Label(self.options_frame, text="mV", padx=10, pady=10).grid(row=0, column=3)
-
-        # # make labels and an entry widget for a user to change the ending voltage
-        # #  of the triangle wave
-        # tk.Label(self.options_frame, text="Ending Voltage: ",
-        #          padx=10, pady=10
-        #          ).grid(row=1, column=0)
-        # # spinbox for the user to change the voltage
-        # tk.Entry(self.options_frame, textvariable=self.end_volt).grid(row=1, column=1)
-        # # put the current value in the entry widget
-        # self.end_volt.set(_master.device_params.cv_settings.end_voltage)
-        # tk.Label(self.options_frame, text="mV", padx=10, pady=10).grid(row=1, column=3)
-
-        # # make labels and an entry widget for a user to change the sweep rate of the triangle wave
-        # tk.Label(self.options_frame, text="Sweep Rate: ", padx=10, pady=10).grid(row=2, column=0)
-        # # entry widget for the user to change the voltage
-        # tk.Entry(self.options_frame, textvariable=self.freq).grid(row=2, column=1)
-        # # put the current value in the entry widget
-        # self.freq.set(_master.device_params.cv_settings.sweep_rate)
-
-        # tk.Label(self.options_frame, text="V/s", padx=10, pady=10).grid(row=2, column=3)
-# ///////////////////////////////////////////////////////////////////////////////////////////////////////
+      
         # make labels and option menu for the user to change current range the device detects
         tk.Label(self.options_frame, text="Port: ", padx=10, pady=10).grid(row=0, column=1)
         self.port_options = tk.StringVar(self.options_frame)
@@ -833,7 +804,6 @@ class SerialSettingChanges(tk.Toplevel):
     def get_values(self):
         self.port = self.port_options.get()
         self.speed = self.speed_options.get()
-        # self.options_frame.destroy()
 
     def make_buttons(self, frame):
         # TODO: think these can be removed
