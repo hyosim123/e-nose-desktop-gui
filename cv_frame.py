@@ -193,6 +193,9 @@ class CVFrame(ttk.Frame):
                     value = ((3600 * int(data[0])) + (60 * int(data[1])) + (int(data[2]))) if i == 0 else int(data[0])
                     _data_hold[i].append(value)
 
+        x_lim_low = min(_data_hold[0])
+        x_lim_high = max(_data_hold[0])
+        self.graph.resize_x(x_lim_low, x_lim_high)    
         for i in self.sensor_settings.sensors_selected:  # go through each data line and add it to self.data
             normalized_data = []
             max_value = max(_data_hold[i])
@@ -338,14 +341,6 @@ class CVFrame(ttk.Frame):
             :return: binds the data to the master instead of returning anything
             """
             self.sensor_settings.get_current_settings()
-            # if self.device.last_experiment != "CV":  # the look up table is not correct
-            #     self.send_cv_parameters()
-            #     self.device.set_last_run = "CV"
-            # self.run_button = run_button  # bind button to self so it can be put active again
-            # # inactive the button so the user cant hit it twice
-            # # self.run_button.config(state='disabled')
-            # # self.device.usb_write('R')  # step 1
-            # self.device = usb_comm.AmpUsb(self, self.device.device_params, self.sensor_settings.port, self.sensor_settings.baud_rate)
             if self.master.device.Serial.isOpen():
                 self.device.Serial = self.master.device.Serial
                 logging.debug("device reading")
@@ -372,6 +367,7 @@ class CVFrame(ttk.Frame):
             # if check_message == COMPLETE_MESSAGE:
             if check_message and len(check_message) > 1:
                 self.master.cv.parse_and_display_csv_data(check_message)
+
                 # self.get_and_display_data(canvas)
             else:
                 # wait a little longer and retry, after a certain amount of time, timeout
