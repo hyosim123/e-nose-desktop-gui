@@ -126,7 +126,7 @@ class ElectroChemGUI(tk.Tk):
                 first_array = _reader.next()  # get the first line that has the data labels
                 first_element = first_array[0].split(":") if len(first_array) != 0 else ''
                 # figure out what type of data was opened
-                if len(first_array) > 0 and len(first_element) == 3:
+                if len(first_array) > 0:
                     # this is a cyclic voltammetry data
                     self.cv.open_data(_reader, first_array)
             _file.close()
@@ -219,7 +219,6 @@ def get_data_from_csv_file(_filename):
 
         for row in _reader:
             for i, data in enumerate(row):
-                # _data_hold[i].append(float(data))
                 _data_hold[i].append(data)
     _file.close()
     return _data_hold

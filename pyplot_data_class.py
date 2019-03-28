@@ -7,6 +7,7 @@
 import csv
 import logging
 import traceback
+import datetime
 
 __author__ = 'Karthik Gangadhara'
 
@@ -100,7 +101,7 @@ class PyplotData(object):
 
             for i in range(length):
                 # this is only take the voltage of the first run
-                line[0] = self.voltage_data[0][i]
+                line[0] = str(datetime.timedelta(seconds=self.voltage_data[0][i]))         
                 for j in range(width):
                     line[j + 1] = _data_array[j][i]
                 writer.writerow(line)
