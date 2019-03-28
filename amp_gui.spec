@@ -4,7 +4,7 @@ block_cipher = None
 
 
 a = Analysis(['amp_gui.py'],
-             pathex=['D:\\Thesis\\Git\\e-nose-desktop-gui'],
+             pathex=['C:\\Users\\kgangadhar\\Desktop\\git\\e-nose-desktop-gui'],
              binaries=[],
              datas=[],
              hiddenimports=[],
