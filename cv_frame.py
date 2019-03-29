@@ -233,7 +233,10 @@ class CVFrame(ttk.Frame):
                     value = ((3600 * int(data[0])) + (60 * int(data[1])) + (int(data[2]))) if i == 0 else int(data[0])
                     _data_hold[i].append(value)
 
-        # for i in range(1, len(first_line)):  # go through each data line and add it to self.data
+        x_lim_low = min(_data_hold[0])
+        x_lim_high = max(_data_hold[0])
+        self.graph.resize_x(x_lim_low, x_lim_high)
+        self.sensor_settings.get_current_settings()
         for i in self.sensor_settings.sensors_selected:  # go through each data line and add it to self.data
             # self.graph.update_data(_data_hold[0], _data_hold[i], label=first_line[i])
             normalized_data = []
