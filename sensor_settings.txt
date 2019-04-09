@@ -1,4 +1,4 @@
-baud_rate = 110
+baud_rate = 115200
 time_target = 1
-sensors_selected = [128]
-port = COM19
+sensors_selected = [1, 2, 3]
+port = COM12

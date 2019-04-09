@@ -312,6 +312,9 @@ class AmpUsb(object):
             print(line_data)
             data.append(line_data)
 
+        # write to stop the application
+        self.Serial.write(b'h')
+        # return the accumulated data
         return data    
 
     def start_hardware(self):
